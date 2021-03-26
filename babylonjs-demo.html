@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>3DRoom</title>
+</head>
+
+
+<!--<script src="https://preview.babylonjs.com/ammo.js"></script>-->
+<!--<script src="https://preview.babylonjs.com/cannon.js"></script>-->
+<!--<script src="https://preview.babylonjs.com/Oimo.js"></script>-->
+<!--<script src="https://preview.babylonjs.com/babylon.js"></script>-->
+
+<!--<script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>-->
+<!--<script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>-->
+<!--<script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>-->
+
+<!--<script src="https://cdn.bootcdn.net/ajax/libs/heatmap.js/2.0.2/heatmap.min.js"></script>-->
+<script src="bablonjs/ammo.js"></script>
+<script src="bablonjs/cannon.js"></script>
+<script src="bablonjs/Oimo.js"></script>
+<script src="bablonjs/babylon.js"></script>
+
+<script src="bablonjs/babylonjs.loaders.min.js"></script>
+<script src="bablonjs/babylonjs.serializers.min.js"></script>
+<script src="bablonjs/babylonjs.materials.min.js"></script>
+
+<script src="bablonjs/heatmap.min.js"></script>
+
+
+<style>
+    html, body {
+        position: relative;
+        overflow: hidden;
+        width   : 100%;
+        height  : 100%;
+        margin  : 0;
+        padding : 0;
+        position: relative;
+    }
+
+    #renderCanvas {
+        width   : 100%;
+        height  : 100%;
+        touch-action: none;
+    }
+    #loadingScreen {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        color: white;
+        text-align: center;
+        background-color: #000000cc;
+        z-index: 9999;
+    }
+</style>
+<style>
+    body{font-weight:100;margin:0}body{-webkit-tap-highlight-color:transparent;background-color:#222428;font-size:100%;font-family:Open Sans;height:100%; position: relative;}.loader{top:50%;left:50%;-webkit-transform:translate(-50%,-50%);-mos-transform:translate(-50%,-50%);transform:translate(-50%,-50%);text-align:center;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default;width:80%;overflow:visible}.loader,.loader div{position:absolute;height:36px}.loader div{width:30px;margin:0 10px;opacity:0;animation:move 2s linear infinite;-o-animation:move 2s linear infinite;-moz-animation:move 2s linear infinite;-webkit-animation:move 2s linear infinite;transform:rotate(180deg);-o-transform:rotate(180deg);-moz-transform:rotate(180deg);-webkit-transform:rotate(180deg);color:#fff;font-size:3em}.loader div:nth-child(8):before{background:#db2f00}.loader div:nth-child(8):before,.loader div:nth-child(9):before{content:'';position:absolute;bottom:-15px;left:0;width:30px;height:30px;border-radius:100%}.loader div:nth-child(9):before{background:#f2f2f2}.loader div:nth-child(10):before{bottom:-15px;height:30px;background:#13a3a5}.loader div:after,.loader div:nth-child(10):before{content:'';position:absolute;left:0;width:30px;border-radius:100%}.loader div:after{bottom:-40px;height:5px;background:#39312d}.loader div:nth-child(2){animation-delay:.2s;-o-animation-delay:.2s;-moz-animation-delay:.2s;-webkit-animation-delay:.2s}.loader div:nth-child(3){animation-delay:.4s;-o-animation-delay:.4s;-webkit-animation-delay:.4s}.loader div:nth-child(4){animation-delay:.6s;-o-animation-delay:.6s;-moz-animation-delay:.6s;-webkit-animation-delay:.6s}.loader div:nth-child(5){animation-delay:.8s;-o-animation-delay:.8s;-moz-animation-delay:.8s;-webkit-animation-delay:.8s}.loader div:nth-child(6){animation-delay:1s;-o-animation-delay:1s;-moz-animation-delay:1s;-webkit-animation-delay:1s}.loader div:nth-child(7){animation-delay:1.2s;-o-animation-delay:1.2s;-moz-animation-delay:1.2s;-webkit-animation-delay:1.2s}.loader div:nth-child(8){animation-delay:1.4s;-o-animation-delay:1.4s;-moz-animation-delay:1.4s;-webkit-animation-delay:1.4s}.loader div:nth-child(9){animation-delay:1.6s;-o-animation-delay:1.6s;-moz-animation-delay:1.6s;-webkit-animation-delay:1.6s}.loader div:nth-child(10){animation-delay:1.8s;-o-animation-delay:1.8s;-moz-animation-delay:1.8s;-webkit-animation-delay:1.8s}@keyframes move{0%{right:0;opacity:0}35%{right:41%}35%,65%{-webkit-transform:rotate(0);transform:rotate(0);opacity:1}65%{right:59%}to{right:100%;-webkit-transform:rotate(-180deg);transform:rotate(-180deg)}}@-webkit-keyframes move{0%,to{opacity:0}0%{right:0}35%{right:41%}35%,75%{-webkit-transform:rotate(0);transform:rotate(0);opacity:1}75%{right:59%}to{right:100%;-webkit-transform:rotate(-180deg);transform:rotate(-180deg);opacity:0}}
+</style>
+<body>
+
+<div id="loadingScreen">
+    <div class="loader">
+        <div> L </div>
+        <div> O </div>
+        <div> A </div>
+        <div> D </div>
+        <div> I </div>
+        <div> N </div>
+        <div> G </div>
+        <div> </div>
+        <div> </div>
+        <div> </div>
+    </div>
+</div>
+<canvas id="renderCanvas"></canvas>
+
+
+<div class="heatmap" style="width: 700px;height: 500px;position: fixed;top: 0;left: 0;border: 5px solid red;">
+</div>
+<script>
+    var heatmapData1="{\n" +
+        "\t\"min\": 0,\n" +
+        "\t\"data\": [{\n" +
+        "\t\t\"x\": \"47\",\n" +
+        "\t\t\"y\": \"283\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"53\",\n" +
+        "\t\t\"y\": \"164\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"61\",\n" +
+        "\t\t\"y\": \"317\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"65\",\n" +
+        "\t\t\"y\": \"190\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"70\",\n" +
+        "\t\t\"y\": \"199\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"92\",\n" +
+        "\t\t\"y\": \"380\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"112\",\n" +
+        "\t\t\"y\": \"286\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"119\",\n" +
+        "\t\t\"y\": \"407\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"130\",\n" +
+        "\t\t\"y\": \"138\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"134\",\n" +
+        "\t\t\"y\": \"189\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"140\",\n" +
+        "\t\t\"y\": \"85\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"142\",\n" +
+        "\t\t\"y\": \"241\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"151\",\n" +
+        "\t\t\"y\": \"338\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"159\",\n" +
+        "\t\t\"y\": \"361\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"163\",\n" +
+        "\t\t\"y\": \"369\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"163\",\n" +
+        "\t\t\"y\": \"394\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"165\",\n" +
+        "\t\t\"y\": \"157\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"173\",\n" +
+        "\t\t\"y\": \"346\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"177\",\n" +
+        "\t\t\"y\": \"135\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"178\",\n" +
+        "\t\t\"y\": \"61\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"190\",\n" +
+        "\t\t\"y\": \"206\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"215\",\n" +
+        "\t\t\"y\": \"280\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"224\",\n" +
+        "\t\t\"y\": \"308\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"240\",\n" +
+        "\t\t\"y\": \"143\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"247\",\n" +
+        "\t\t\"y\": \"196\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"249\",\n" +
+        "\t\t\"y\": \"79\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"253\",\n" +
+        "\t\t\"y\": \"328\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"253\",\n" +
+        "\t\t\"y\": \"384\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"254\",\n" +
+        "\t\t\"y\": \"248\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"254\",\n" +
+        "\t\t\"y\": \"389\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"264\",\n" +
+        "\t\t\"y\": \"234\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"266\",\n" +
+        "\t\t\"y\": \"83\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"275\",\n" +
+        "\t\t\"y\": \"66\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"289\",\n" +
+        "\t\t\"y\": \"142\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"289\",\n" +
+        "\t\t\"y\": \"291\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"295\",\n" +
+        "\t\t\"y\": \"310\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"298\",\n" +
+        "\t\t\"y\": \"273\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"298\",\n" +
+        "\t\t\"y\": \"417\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"312\",\n" +
+        "\t\t\"y\": \"295\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"315\",\n" +
+        "\t\t\"y\": \"158\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"321\",\n" +
+        "\t\t\"y\": \"388\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"344\",\n" +
+        "\t\t\"y\": \"203\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"344\",\n" +
+        "\t\t\"y\": \"304\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"360\",\n" +
+        "\t\t\"y\": \"205\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"360\",\n" +
+        "\t\t\"y\": \"302\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"364\",\n" +
+        "\t\t\"y\": \"409\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"368\",\n" +
+        "\t\t\"y\": \"149\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"380\",\n" +
+        "\t\t\"y\": \"314\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"383\",\n" +
+        "\t\t\"y\": \"99\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"390\",\n" +
+        "\t\t\"y\": \"391\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"394\",\n" +
+        "\t\t\"y\": \"412\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"398\",\n" +
+        "\t\t\"y\": \"77\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"399\",\n" +
+        "\t\t\"y\": \"318\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"406\",\n" +
+        "\t\t\"y\": \"121\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"410\",\n" +
+        "\t\t\"y\": \"199\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"414\",\n" +
+        "\t\t\"y\": \"160\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"415\",\n" +
+        "\t\t\"y\": \"390\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"421\",\n" +
+        "\t\t\"y\": \"299\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"432\",\n" +
+        "\t\t\"y\": \"297\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 2\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"432\",\n" +
+        "\t\t\"y\": \"324\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"443\",\n" +
+        "\t\t\"y\": \"188\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"458\",\n" +
+        "\t\t\"y\": \"136\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"465\",\n" +
+        "\t\t\"y\": \"201\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"466\",\n" +
+        "\t\t\"y\": \"392\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"471\",\n" +
+        "\t\t\"y\": \"432\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"495\",\n" +
+        "\t\t\"y\": \"164\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"497\",\n" +
+        "\t\t\"y\": \"254\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"499\",\n" +
+        "\t\t\"y\": \"145\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"502\",\n" +
+        "\t\t\"y\": \"371\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"518\",\n" +
+        "\t\t\"y\": \"344\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"519\",\n" +
+        "\t\t\"y\": \"113\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"529\",\n" +
+        "\t\t\"y\": \"191\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"532\",\n" +
+        "\t\t\"y\": \"317\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"535\",\n" +
+        "\t\t\"y\": \"216\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"546\",\n" +
+        "\t\t\"y\": \"289\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"560\",\n" +
+        "\t\t\"y\": \"332\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"570\",\n" +
+        "\t\t\"y\": \"118\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"582\",\n" +
+        "\t\t\"y\": \"418\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"589\",\n" +
+        "\t\t\"y\": \"303\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"600\",\n" +
+        "\t\t\"y\": \"137\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"602\",\n" +
+        "\t\t\"y\": \"229\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"603\",\n" +
+        "\t\t\"y\": \"375\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"609\",\n" +
+        "\t\t\"y\": \"177\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"610\",\n" +
+        "\t\t\"y\": \"273\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}, {\n" +
+        "\t\t\"x\": \"613\",\n" +
+        "\t\t\"y\": \"212\",\n" +
+        "\t\t\"radius\": 90,\n" +
+        "\t\t\"value\": 1\n" +
+        "\t}]\n" +
+        "}";
+</script>
+<script>
+    var heatmapData2="{\"min\":0,\"max\":8,\"data\":[{\"x\":\"67\",\"y\":\"381\",\"radius\":100,\"value\":1},{\"x\":\"109\",\"y\":\"237\",\"radius\":100,\"value\":1},{\"x\":\"116\",\"y\":\"120\",\"radius\":100,\"value\":1},{\"x\":\"116\",\"y\":\"184\",\"radius\":100,\"value\":1},{\"x\":\"118\",\"y\":\"252\",\"radius\":100,\"value\":1},{\"x\":\"120\",\"y\":\"118\",\"radius\":100,\"value\":1},{\"x\":\"121\",\"y\":\"97\",\"radius\":100,\"value\":1},{\"x\":\"121\",\"y\":\"102\",\"radius\":100,\"value\":1},{\"x\":\"121\",\"y\":\"105\",\"radius\":100,\"value\":1},{\"x\":\"122\",\"y\":\"106\",\"radius\":100,\"value\":1},{\"x\":\"122\",\"y\":\"109\",\"radius\":100,\"value\":1},{\"x\":\"124\",\"y\":\"112\",\"radius\":100,\"value\":1},{\"x\":\"125\",\"y\":\"115\",\"radius\":100,\"value\":1},{\"x\":\"126\",\"y\":\"120\",\"radius\":100,\"value\":1},{\"x\":\"127\",\"y\":\"122\",\"radius\":100,\"value\":1},{\"x\":\"133\",\"y\":\"131\",\"radius\":100,\"value\":1},{\"x\":\"134\",\"y\":\"133\",\"radius\":100,\"value\":1},{\"x\":\"134\",\"y\":\"198\",\"radius\":100,\"value\":1},{\"x\":\"136\",\"y\":\"311\",\"radius\":100,\"value\":1},{\"x\":\"140\",\"y\":\"139\",\"radius\":100,\"value\":1},{\"x\":\"141\",\"y\":\"148\",\"radius\":100,\"value\":1},{\"x\":\"143\",\"y\":\"144\",\"radius\":100,\"value\":1},{\"x\":\"143\",\"y\":\"164\",\"radius\":100,\"value\":1},{\"x\":\"144\",\"y\":\"153\",\"radius\":100,\"value\":1},{\"x\":\"145\",\"y\":\"154\",\"radius\":100,\"value\":1},{\"x\":\"145\",\"y\":\"206\",\"radius\":100,\"value\":1},{\"x\":\"146\",\"y\":\"190\",\"radius\":100,\"value\":1},{\"x\":\"148\",\"y\":\"189\",\"radius\":100,\"value\":1},{\"x\":\"150\",\"y\":\"165\",\"radius\":100,\"value\":1},{\"x\":\"152\",\"y\":\"228\",\"radius\":100,\"value\":1},{\"x\":\"153\",\"y\":\"174\",\"radius\":100,\"value\":1},{\"x\":\"153\",\"y\":\"222\",\"radius\":100,\"value\":1},{\"x\":\"153\",\"y\":\"239\",\"radius\":100,\"value\":1},{\"x\":\"153\",\"y\":\"245\",\"radius\":100,\"value\":1},{\"x\":\"154\",\"y\":\"176\",\"radius\":100,\"value\":2},{\"x\":\"154\",\"y\":\"181\",\"radius\":100,\"value\":1},{\"x\":\"156\",\"y\":\"164\",\"radius\":100,\"value\":1},{\"x\":\"156\",\"y\":\"288\",\"radius\":100,\"value\":1},{\"x\":\"158\",\"y\":\"173\",\"radius\":100,\"value\":1},{\"x\":\"158\",\"y\":\"283\",\"radius\":100,\"value\":8},{\"x\":\"159\",\"y\":\"187\",\"radius\":100,\"value\":1},{\"x\":\"160\",\"y\":\"262\",\"radius\":100,\"value\":1},{\"x\":\"160\",\"y\":\"281\",\"radius\":100,\"value\":1},{\"x\":\"161\",\"y\":\"168\",\"radius\":100,\"value\":1},{\"x\":\"163\",\"y\":\"297\",\"radius\":100,\"value\":1},{\"x\":\"164\",\"y\":\"298\",\"radius\":100,\"value\":1},{\"x\":\"165\",\"y\":\"273\",\"radius\":100,\"value\":1},{\"x\":\"165\",\"y\":\"275\",\"radius\":100,\"value\":2},{\"x\":\"168\",\"y\":\"164\",\"radius\":100,\"value\":1},{\"x\":\"170\",\"y\":\"321\",\"radius\":100,\"value\":1},{\"x\":\"172\",\"y\":\"206\",\"radius\":100,\"value\":1},{\"x\":\"173\",\"y\":\"244\",\"radius\":100,\"value\":1},{\"x\":\"174\",\"y\":\"164\",\"radius\":100,\"value\":1},{\"x\":\"175\",\"y\":\"395\",\"radius\":100,\"value\":1},{\"x\":\"178\",\"y\":\"327\",\"radius\":100,\"value\":1},{\"x\":\"179\",\"y\":\"308\",\"radius\":100,\"value\":1},{\"x\":\"184\",\"y\":\"153\",\"radius\":100,\"value\":1},{\"x\":\"188\",\"y\":\"225\",\"radius\":100,\"value\":1},{\"x\":\"191\",\"y\":\"289\",\"radius\":100,\"value\":1},{\"x\":\"193\",\"y\":\"296\",\"radius\":100,\"value\":1},{\"x\":\"195\",\"y\":\"124\",\"radius\":100,\"value\":1},{\"x\":\"207\",\"y\":\"214\",\"radius\":100,\"value\":1},{\"x\":\"208\",\"y\":\"237\",\"radius\":100,\"value\":1},{\"x\":\"209\",\"y\":\"129\",\"radius\":100,\"value\":1},{\"x\":\"211\",\"y\":\"114\",\"radius\":100,\"value\":1},{\"x\":\"215\",\"y\":\"204\",\"radius\":100,\"value\":1},{\"x\":\"216\",\"y\":\"210\",\"radius\":100,\"value\":1},{\"x\":\"217\",\"y\":\"225\",\"radius\":100,\"value\":1},{\"x\":\"221\",\"y\":\"117\",\"radius\":100,\"value\":1},{\"x\":\"231\",\"y\":\"304\",\"radius\":100,\"value\":1},{\"x\":\"239\",\"y\":\"254\",\"radius\":100,\"value\":1},{\"x\":\"243\",\"y\":\"291\",\"radius\":100,\"value\":1},{\"x\":\"245\",\"y\":\"151\",\"radius\":100,\"value\":1},{\"x\":\"247\",\"y\":\"204\",\"radius\":100,\"value\":1},{\"x\":\"247\",\"y\":\"300\",\"radius\":100,\"value\":1},{\"x\":\"251\",\"y\":\"258\",\"radius\":100,\"value\":1},{\"x\":\"256\",\"y\":\"334\",\"radius\":100,\"value\":1},{\"x\":\"257\",\"y\":\"264\",\"radius\":100,\"value\":1},{\"x\":\"267\",\"y\":\"156\",\"radius\":100,\"value\":1},{\"x\":\"268\",\"y\":\"233\",\"radius\":100,\"value\":1},{\"x\":\"269\",\"y\":\"151\",\"radius\":100,\"value\":1},{\"x\":\"269\",\"y\":\"197\",\"radius\":100,\"value\":1},{\"x\":\"279\",\"y\":\"217\",\"radius\":100,\"value\":1},{\"x\":\"284\",\"y\":\"122\",\"radius\":100,\"value\":1},{\"x\":\"285\",\"y\":\"198\",\"radius\":100,\"value\":1},{\"x\":\"286\",\"y\":\"187\",\"radius\":100,\"value\":1},{\"x\":\"288\",\"y\":\"202\",\"radius\":100,\"value\":1},{\"x\":\"289\",\"y\":\"175\",\"radius\":100,\"value\":1},{\"x\":\"289\",\"y\":\"381\",\"radius\":100,\"value\":1},{\"x\":\"290\",\"y\":\"268\",\"radius\":100,\"value\":1},{\"x\":\"290\",\"y\":\"335\",\"radius\":100,\"value\":1},{\"x\":\"291\",\"y\":\"189\",\"radius\":100,\"value\":5},{\"x\":\"293\",\"y\":\"106\",\"radius\":100,\"value\":1},{\"x\":\"294\",\"y\":\"147\",\"radius\":100,\"value\":1},{\"x\":\"294\",\"y\":\"293\",\"radius\":100,\"value\":1},{\"x\":\"296\",\"y\":\"189\",\"radius\":100,\"value\":1},{\"x\":\"300\",\"y\":\"211\",\"radius\":100,\"value\":1},{\"x\":\"300\",\"y\":\"212\",\"radius\":100,\"value\":1},{\"x\":\"304\",\"y\":\"211\",\"radius\":100,\"value\":1},{\"x\":\"305\",\"y\":\"119\",\"radius\":100,\"value\":1},{\"x\":\"312\",\"y\":\"257\",\"radius\":100,\"value\":1},{\"x\":\"313\",\"y\":\"151\",\"radius\":100,\"value\":1},{\"x\":\"314\",\"y\":\"377\",\"radius\":100,\"value\":1},{\"x\":\"315\",\"y\":\"301\",\"radius\":100,\"value\":1},{\"x\":\"321\",\"y\":\"145\",\"radius\":100,\"value\":1},{\"x\":\"322\",\"y\":\"144\",\"radius\":100,\"value\":1},{\"x\":\"324\",\"y\":\"301\",\"radius\":100,\"value\":1},{\"x\":\"327\",\"y\":\"135\",\"radius\":100,\"value\":1},{\"x\":\"327\",\"y\":\"239\",\"radius\":100,\"value\":1},{\"x\":\"331\",\"y\":\"211\",\"radius\":100,\"value\":1},{\"x\":\"334\",\"y\":\"330\",\"radius\":100,\"value\":1},{\"x\":\"337\",\"y\":\"145\",\"radius\":100,\"value\":1},{\"x\":\"338\",\"y\":\"183\",\"radius\":100,\"value\":1},{\"x\":\"347\",\"y\":\"222\",\"radius\":100,\"value\":1},{\"x\":\"348\",\"y\":\"159\",\"radius\":100,\"value\":1},{\"x\":\"348\",\"y\":\"295\",\"radius\":100,\"value\":1},{\"x\":\"349\",\"y\":\"292\",\"radius\":100,\"value\":1},{\"x\":\"349\",\"y\":\"301\",\"radius\":100,\"value\":1},{\"x\":\"351\",\"y\":\"111\",\"radius\":100,\"value\":1},{\"x\":\"352\",\"y\":\"215\",\"radius\":100,\"value\":1},{\"x\":\"353\",\"y\":\"244\",\"radius\":100,\"value\":1},{\"x\":\"370\",\"y\":\"140\",\"radius\":100,\"value\":1},{\"x\":\"372\",\"y\":\"127\",\"radius\":100,\"value\":1},{\"x\":\"372\",\"y\":\"178\",\"radius\":100,\"value\":1},{\"x\":\"375\",\"y\":\"107\",\"radius\":100,\"value\":1},{\"x\":\"375\",\"y\":\"146\",\"radius\":100,\"value\":1},{\"x\":\"376\",\"y\":\"113\",\"radius\":100,\"value\":1},{\"x\":\"379\",\"y\":\"293\",\"radius\":100,\"value\":1},{\"x\":\"383\",\"y\":\"242\",\"radius\":100,\"value\":1},{\"x\":\"389\",\"y\":\"294\",\"radius\":100,\"value\":1},{\"x\":\"393\",\"y\":\"136\",\"radius\":100,\"value\":1},{\"x\":\"393\",\"y\":\"180\",\"radius\":100,\"value\":1},{\"x\":\"398\",\"y\":\"107\",\"radius\":100,\"value\":1},{\"x\":\"398\",\"y\":\"297\",\"radius\":100,\"value\":1},{\"x\":\"399\",\"y\":\"233\",\"radius\":100,\"value\":1},{\"x\":\"403\",\"y\":\"193\",\"radius\":100,\"value\":1},{\"x\":\"404\",\"y\":\"295\",\"radius\":100,\"value\":1},{\"x\":\"406\",\"y\":\"257\",\"radius\":100,\"value\":1},{\"x\":\"407\",\"y\":\"257\",\"radius\":100,\"value\":1},{\"x\":\"407\",\"y\":\"300\",\"radius\":100,\"value\":1},{\"x\":\"408\",\"y\":\"187\",\"radius\":100,\"value\":1},{\"x\":\"409\",\"y\":\"150\",\"radius\":100,\"value\":1},{\"x\":\"411\",\"y\":\"198\",\"radius\":100,\"value\":1},{\"x\":\"411\",\"y\":\"247\",\"radius\":100,\"value\":1},{\"x\":\"412\",\"y\":\"205\",\"radius\":100,\"value\":1},{\"x\":\"412\",\"y\":\"206\",\"radius\":100,\"value\":1},{\"x\":\"413\",\"y\":\"106\",\"radius\":100,\"value\":1},{\"x\":\"416\",\"y\":\"300\",\"radius\":100,\"value\":1},{\"x\":\"417\",\"y\":\"258\",\"radius\":100,\"value\":1},{\"x\":\"428\",\"y\":\"130\",\"radius\":100,\"value\":1},{\"x\":\"429\",\"y\":\"255\",\"radius\":100,\"value\":1},{\"x\":\"429\",\"y\":\"258\",\"radius\":100,\"value\":1},{\"x\":\"430\",\"y\":\"238\",\"radius\":100,\"value\":1},{\"x\":\"432\",\"y\":\"227\",\"radius\":100,\"value\":1},{\"x\":\"433\",\"y\":\"247\",\"radius\":100,\"value\":1},{\"x\":\"436\",\"y\":\"385\",\"radius\":100,\"value\":1},{\"x\":\"438\",\"y\":\"265\",\"radius\":100,\"value\":1},{\"x\":\"442\",\"y\":\"208\",\"radius\":100,\"value\":1},{\"x\":\"446\",\"y\":\"290\",\"radius\":100,\"value\":1},{\"x\":\"452\",\"y\":\"243\",\"radius\":100,\"value\":1},{\"x\":\"454\",\"y\":\"193\",\"radius\":100,\"value\":1},{\"x\":\"454\",\"y\":\"298\",\"radius\":100,\"value\":1},{\"x\":\"463\",\"y\":\"288\",\"radius\":100,\"value\":1},{\"x\":\"465\",\"y\":\"292\",\"radius\":100,\"value\":1},{\"x\":\"467\",\"y\":\"300\",\"radius\":100,\"value\":1},{\"x\":\"469\",\"y\":\"272\",\"radius\":100,\"value\":1},{\"x\":\"472\",\"y\":\"139\",\"radius\":100,\"value\":1},{\"x\":\"479\",\"y\":\"143\",\"radius\":100,\"value\":1},{\"x\":\"480\",\"y\":\"143\",\"radius\":100,\"value\":1},{\"x\":\"483\",\"y\":\"162\",\"radius\":100,\"value\":1},{\"x\":\"484\",\"y\":\"286\",\"radius\":100,\"value\":1},{\"x\":\"486\",\"y\":\"288\",\"radius\":100,\"value\":1},{\"x\":\"490\",\"y\":\"112\",\"radius\":100,\"value\":1},{\"x\":\"493\",\"y\":\"298\",\"radius\":100,\"value\":1},{\"x\":\"495\",\"y\":\"287\",\"radius\":100,\"value\":1},{\"x\":\"496\",\"y\":\"258\",\"radius\":100,\"value\":1},{\"x\":\"497\",\"y\":\"308\",\"radius\":100,\"value\":1},{\"x\":\"502\",\"y\":\"111\",\"radius\":100,\"value\":1},{\"x\":\"502\",\"y\":\"294\",\"radius\":100,\"value\":1},{\"x\":\"507\",\"y\":\"145\",\"radius\":100,\"value\":1},{\"x\":\"507\",\"y\":\"194\",\"radius\":100,\"value\":1},{\"x\":\"508\",\"y\":\"131\",\"radius\":100,\"value\":1},{\"x\":\"513\",\"y\":\"280\",\"radius\":100,\"value\":1},{\"x\":\"514\",\"y\":\"297\",\"radius\":100,\"value\":1},{\"x\":\"514\",\"y\":\"391\",\"radius\":100,\"value\":1},{\"x\":\"517\",\"y\":\"132\",\"radius\":100,\"value\":1},{\"x\":\"519\",\"y\":\"110\",\"radius\":100,\"value\":1},{\"x\":\"522\",\"y\":\"118\",\"radius\":100,\"value\":1},{\"x\":\"527\",\"y\":\"110\",\"radius\":100,\"value\":1},{\"x\":\"528\",\"y\":\"252\",\"radius\":100,\"value\":1},{\"x\":\"528\",\"y\":\"275\",\"radius\":100,\"value\":1},{\"x\":\"529\",\"y\":\"299\",\"radius\":100,\"value\":1},{\"x\":\"533\",\"y\":\"123\",\"radius\":100,\"value\":1},{\"x\":\"533\",\"y\":\"209\",\"radius\":100,\"value\":1},{\"x\":\"533\",\"y\":\"235\",\"radius\":100,\"value\":1},{\"x\":\"535\",\"y\":\"190\",\"radius\":100,\"value\":1},{\"x\":\"537\",\"y\":\"293\",\"radius\":100,\"value\":1},{\"x\":\"538\",\"y\":\"235\",\"radius\":100,\"value\":1},{\"x\":\"539\",\"y\":\"119\",\"radius\":100,\"value\":1},{\"x\":\"541\",\"y\":\"266\",\"radius\":100,\"value\":1},{\"x\":\"542\",\"y\":\"121\",\"radius\":100,\"value\":1},{\"x\":\"542\",\"y\":\"280\",\"radius\":100,\"value\":1},{\"x\":\"545\",\"y\":\"210\",\"radius\":100,\"value\":1},{\"x\":\"545\",\"y\":\"233\",\"radius\":100,\"value\":1},{\"x\":\"547\",\"y\":\"261\",\"radius\":100,\"value\":1},{\"x\":\"551\",\"y\":\"244\",\"radius\":100,\"value\":1},{\"x\":\"554\",\"y\":\"202\",\"radius\":100,\"value\":1},{\"x\":\"554\",\"y\":\"203\",\"radius\":100,\"value\":1},{\"x\":\"554\",\"y\":\"265\",\"radius\":100,\"value\":1},{\"x\":\"556\",\"y\":\"218\",\"radius\":100,\"value\":1},{\"x\":\"558\",\"y\":\"290\",\"radius\":100,\"value\":1},{\"x\":\"559\",\"y\":\"221\",\"radius\":100,\"value\":1},{\"x\":\"560\",\"y\":\"259\",\"radius\":100,\"value\":1},{\"x\":\"562\",\"y\":\"368\",\"radius\":100,\"value\":1},{\"x\":\"563\",\"y\":\"335\",\"radius\":100,\"value\":1},{\"x\":\"584\",\"y\":\"284\",\"radius\":100,\"value\":1},{\"x\":\"589\",\"y\":\"191\",\"radius\":100,\"value\":1},{\"x\":\"592\",\"y\":\"276\",\"radius\":100,\"value\":1},{\"x\":\"596\",\"y\":\"150\",\"radius\":100,\"value\":1},{\"x\":\"596\",\"y\":\"259\",\"radius\":100,\"value\":1},{\"x\":\"597\",\"y\":\"131\",\"radius\":100,\"value\":1},{\"x\":\"599\",\"y\":\"194\",\"radius\":100,\"value\":1},{\"x\":\"600\",\"y\":\"197\",\"radius\":100,\"value\":1},{\"x\":\"607\",\"y\":\"170\",\"radius\":100,\"value\":1},{\"x\":\"607\",\"y\":\"225\",\"radius\":100,\"value\":1},{\"x\":\"608\",\"y\":\"181\",\"radius\":100,\"value\":1},{\"x\":\"612\",\"y\":\"121\",\"radius\":100,\"value\":1},{\"x\":\"617\",\"y\":\"159\",\"radius\":100,\"value\":1},{\"x\":\"618\",\"y\":\"150\",\"radius\":100,\"value\":1},{\"x\":\"620\",\"y\":\"99\",\"radius\":100,\"value\":1}]}"
+
+</script>
+<script>
+
+    var heatmapInstance = h337.create({
+        container: document.querySelector('.heatmap'),
+        backgroundColor:'#fffff',
+        radius: 100,
+        opacity:0
+    });
+
+
+    var data = {
+        data: []
+    };
+
+    var heatCanvas=document.querySelector('.heatmap').children[0]
+
+
+
+
+
+    window.addEventListener('DOMContentLoaded', function(){
+        // get the canvas DOM element
+        var canvas = document.getElementById('renderCanvas');
+
+        // load the 3D engine
+        var engine = new BABYLON.Engine(canvas, true);
+        var loadingScreenDiv = window.document.getElementById("loadingScreen");
+        function customLoadingScreen() {
+            console.log("customLoadingScreen creation")
+        }
+        customLoadingScreen.prototype.displayLoadingUI = function () {
+            console.log("customLoadingScreen loading")
+        };
+        customLoadingScreen.prototype.hideLoadingUI = function () {
+            console.log("customLoadingScreen loaded")
+            loadingScreenDiv.style.display = "none";
+        };
+        var loadingScreen = new customLoadingScreen();
+        engine.loadingScreen = loadingScreen;
+
+        let plane=null;
+        let myTexture = null;
+
+        // createScene function that creates and return the scene
+        var createScene = function(){
+            // create a basic BJS Scene object
+            const scene = new BABYLON.Scene(engine);
+            scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+            const camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 3, new BABYLON.Vector3(0, 10 ,0    ), scene);
+
+
+            camera.attachControl(canvas, true,false);
+            const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+            // create a built-in "sphere" shape; its constructor takes 6 params: name, segment, diameter, scene, updatable, sideOrientation
+            BABYLON.SceneLoader.Append("./", "3dRoom.glb", scene, function (newMeshes) {
+                console.log(newMeshes)
+
+
+            });
+
+            var hl = new BABYLON.HighlightLayer("hl", scene);
+
+            heatmapInstance.setData(JSON.parse(heatmapData1));
+            plane = BABYLON.MeshBuilder.CreatePlane("plane", {width:11,height:5,updatable:true,sideOrientation:BABYLON.Mesh.DOUBLESIDE,opacityTextureIntensity:0.5}, scene);
+            plane.rotation.x = BABYLON.Tools.ToRadians(90);
+            plane.position.x=0.4
+            plane.position.y=0.6;
+            plane.position.z=12
+            myTexture = new BABYLON.Texture(heatCanvas.toDataURL("image/png"), scene    );
+            var mat = new BABYLON.StandardMaterial("dog", scene);
+            mat.diffuseTexture = myTexture;
+            mat.diffuseTexture.hasAlpha = true;
+            plane.material = mat;
+
+
+
+            var plane1= plane.clone("plane1");
+
+            plane1.position.x=-11
+            plane1.position.y=0.6;
+            plane1.position.z=12
+
+
+
+            let plane2 = BABYLON.MeshBuilder.CreatePlane("plane", {width:9,height:14,updatable:true,sideOrientation:BABYLON.Mesh.DOUBLESIDE,opacityTextureIntensity:0.5}, scene);
+            plane2.rotation.x = BABYLON.Tools.ToRadians(90);
+            plane2.position.x=0.4
+            plane2.position.y=0.6;
+            plane2.position.z=-9
+
+
+
+
+            // plane2.material = new BABYLON.SimpleMaterial('mat', scene);
+            plane2.material = mat;
+
+
+            document.querySelector('.heatmap').onclick = function(ev) {
+                heatmapInstance.addData({
+                    x: ev.layerX,
+                    y: ev.layerY,
+                    value: 1
+                });
+            };
+
+            window.addEventListener("click", function () {
+                // We try to pick an object
+                var pickResult = scene.pick(scene.pointerX, scene.pointerY);
+                // console.log(pickResult);
+                if(pickResult.hit && null !=pickResult.pickedMesh){
+                    // hl.addMesh(pickResult.pickedMesh, BABYLON.Color3.White());
+                }
+
+                // hl.addMesh(pickResult, BABYLON.Color3.White());
+
+
+            });
+
+            let i=1;
+            setInterval(function(){
+                console.log("hello",i)
+                if(i==1){
+                    heatmapInstance.setData(JSON.parse(heatmapData1));
+                }
+                if(i==2){
+                    heatmapInstance.setData(JSON.parse(heatmapData2));
+
+                }
+                myTexture.updateURL(heatCanvas.toDataURL("image/png"))
+                i=i==1?2:1;
+            }, 3000);
+
+
+
+            return scene;
+        }
+
+        // call the createScene function
+        window.scene = createScene();
+
+        scene.registerBeforeRender(() => {
+            // let myTexture = new BABYLON.Texture(heatCanvas.toDataURL("image/png"), scene);
+            // plane.material.diffuseTexture = myTexture;
+            // plane.backFaceCulling = false;
+
+
+
+
+        });
+
+        // run the render loop
+        engine.runRenderLoop(function(){
+            scene.render();
+        });
+
+        // the canvas/window resize event handler
+        window.addEventListener('resize', function(){
+            engine.resize();
+        });
+    });
+</script>
+</body>
+</html>
