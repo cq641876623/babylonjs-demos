@@ -24,7 +24,7 @@
 <script src="bablonjs/babylonjs.loaders.min.js"></script>
 <script src="bablonjs/babylonjs.serializers.min.js"></script>
 <script src="bablonjs/babylonjs.materials.min.js"></script>
-<script src="bablonjs/babylonjs.gui.min.js"></script>
+<script src="bablonjs/babylon.gui.min.js"></script>
 
 <script src="bablonjs/heatmap.min.js"></script>
 
@@ -179,7 +179,19 @@
 
 
 
-
+    function randomNum(minNum,maxNum){
+        switch(arguments.length){
+            case 1:
+                return parseInt(Math.random()*minNum+1,10);
+                break;
+            case 2:
+                return parseInt(Math.random()*(maxNum-minNum+1)+minNum,10);
+                break;
+            default:
+                return 0;
+                break;
+        }
+    }
 
 
 
@@ -212,7 +224,7 @@
             // create a basic BJS Scene object
             const scene = new BABYLON.Scene(engine);
             scene.clearColor = new BABYLON.Color3(0, 0, 0);
-            const camera = new BABYLON.ArcRotateCamera("camera", -Math.PI , Math.PI / 2.5, 600, new BABYLON.Vector3(0, 0 ,0    ), scene);
+            const camera = new BABYLON.ArcRotateCamera("camera", -Math.PI , Math.PI / 2.5, 360, new BABYLON.Vector3(0, 0 ,0 ), scene);
             camera.panningSensibility=100
             camera.attachControl(canvas, true,false);
 
@@ -237,8 +249,7 @@
             const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 100000, 0), scene);
             // create a built-in "sphere" shape; its constructor takes 6 params: name, segment, diameter, scene, updatable, sideOrientation
             BABYLON.SceneLoader.Append("./", "runyang3-1.glb", scene, function (newMeshes) {
-                console.log(newMeshes)
-                console.log(scene)
+                // console.log(newMeshes)
 
                 groundMaterial.reflectionTexture.renderList.push(newMeshes.meshes[7]);
 
@@ -309,6 +320,392 @@
 
             });
 
+
+            const plane = BABYLON.MeshBuilder.CreatePlane("plane", {height:40,width:50,sideOrientation:BABYLON.Mesh.DOUBLESIDE}, scene);
+            plane.position.y = 50;
+            plane.position.z = 40;
+            plane.rotation.y =Math.PI / 2;
+
+            let material = new BABYLON.StandardMaterial("plane", scene);
+            plane.material=material;
+            var texture= new BABYLON.DynamicTexture("dynamic texture", {height :637,width:981}, scene);
+            var textureContext = texture.getContext();
+            material.diffuseTexture = texture;
+            material.emissiveTexture = material.diffuseTexture;
+            material.opacityTexture = material.diffuseTexture;
+
+            var fontTitle = "bold 100px Open Sans";
+            var fontForm = "bold 50px Open Sans";
+            var fontUnit = "bold 30px Open Sans";
+            var img = new Image();
+            img.src = './images/a.png';
+            var 总产量=20.00;
+
+
+
+
+            img.onload = function() {
+                //Add image to dynamic texture
+
+                texture.drawText("SMT生产线", 70, 150, fontTitle, "#ffffff", null, true);
+                texture.drawText("总产量", 150, 230, fontForm, "#ffffff", null, true);
+                texture.drawText("单位产量", 150, 330, fontForm, "#ffffff", null, true);
+                texture.drawText("转换率", 150, 430, fontForm, "#ffffff", null, true);
+                texture.drawText("良品率", 150, 530, fontForm, "#ffffff", null, true);
+                //
+                texture.drawText("MW", 850, 230, fontUnit, "#fff91a", null, true);
+                texture.drawText("KW/h", 850, 330, fontUnit, "#fff91a", null, true);
+                texture.drawText("%", 850, 430, fontUnit, "#fff91a", null, true);
+                texture.drawText("%", 850, 530, fontUnit, "#fff91a", null, true);
+                //
+                //
+                texture.drawText("20.00", 500, 230, fontForm, "#fff91a", null, true);
+                texture.drawText("10.00", 500, 330, fontForm, "#fff91a", null, true);
+                texture.drawText("99.000", 500, 430, fontForm, "#fff91a", null, true);
+                texture.drawText("99.000", 500, 530, fontForm, "#fff91a", null, true);
+                textureContext.drawImage(this, 0, 0,981,637);
+                texture.update();
+            }
+
+
+            class CqPanel{
+                #option={
+                    size:{
+                        height:40,
+                        width:50
+                    },
+                    canvasSize:{
+                        width:null,
+                        height:null
+                    },
+                    backGroud:{
+                        url:""
+                    }
+
+                }
+
+                #defaultSize={
+                    height:40,
+                    width:50
+                }
+
+                titilePerc={
+                    x:0.07,
+                    y:0.2,
+                    fontSize: 0.15
+
+                };
+
+                panel=null;
+                material=null;
+                scene=null;
+
+
+                constructor(...args){
+                    switch (args.length) {
+                        case 1:
+                           return this._constructorSimple(...args);
+                            break;
+                        case 2:
+                            return this._constructorComplex(...args)
+                            break;
+                    }
+
+
+                }
+                _constructorSimple(scene) {
+                    return this._constructorComplex(scene,null);
+                }
+
+                _constructorComplex(scene,option) {
+
+                    this.scene=scene;
+                    if(this.scene==null){
+                        console.error("scene不能为null",scene)
+                        return;
+                    }
+
+
+                    this.#option=option==null?this.#option:option;
+
+
+
+
+                    this.panel=this._generatePanel(scene,this.#option);
+
+                    if(this.panel==null)return;
+
+                    this.material=this._generateMaterial(scene,this.#option);
+                    this.panel.material=this.material;
+
+                    this._drawCanvas(this.material.diffuseTexture,this.#option);
+
+                    return this.panel;
+
+                }
+
+                /**
+                 *生成面板
+                 * @param scene
+                 * @param size
+                 * @returns {null|*}
+                 */
+                _generatePanel(scene,option){
+                    if(!option.hasOwnProperty("size")){
+                        option.size=this.#defaultSize;
+                    }
+                    let size=option.size;
+                    if(size.hasOwnProperty("height")&&size.hasOwnProperty("width")){
+                        let panel = BABYLON.MeshBuilder.CreatePlane("panel", {height:size.height,width:size.width,sideOrientation:BABYLON.Mesh.DOUBLESIDE}, scene);
+                        return panel;
+                    }else {
+                        console.error("option缺少面板大小属性，option.size=",size)
+                        return null;
+                    }
+                }
+                _generateMaterial(scene,option){
+                   if(!option.hasOwnProperty("canvasSize")){
+                       option.canvasSize={};
+                   }
+                   if(!option.canvasSize.hasOwnProperty("width")||!option.canvasSize.hasOwnProperty("height")){
+                       var img = new Image();
+                       img.src = option.backGroud.url;
+                       option.canvasSize.width=option.canvasSize.width?option.canvasSize.width:img.width;
+                       option.canvasSize.height=option.canvasSize.height?option.canvasSize.height:img.height;
+                   }
+                    let material = new BABYLON.StandardMaterial("plane", scene);
+                    let texture= new BABYLON.DynamicTexture("dynamic texture", {height :option.canvasSize.height,width:option.canvasSize.width}, scene);
+                    material.diffuseTexture = texture;
+                    material.emissiveTexture = material.diffuseTexture;
+                    material.opacityTexture = material.diffuseTexture;
+                    return material;
+
+                }
+                _loadBackGroudImg(option,texture,callBack){
+                    var img = new Image();
+                    img.src = option.backGroud.url;
+
+                    let ctx=texture.getContext();
+
+                    img.onload = function() {
+                        ctx.drawImage( this, 0 , 0 , option.canvasSize.width,option.canvasSize.height );
+                        texture.update();
+                        callBack();
+
+                    }
+
+
+
+                }
+
+
+
+
+
+
+
+                _drawCanvas(texture,option){
+                    let ctx=texture.getContext();
+                    let width=texture._canvas.width;
+                    let height=texture._canvas.height;
+
+                    this._loadBackGroudImg(this.#option,texture,()=>{
+                        let title=option.title?option.title:{};
+                        let form=option.form?option.form:this.#defaultForm;
+                        this._drawTitle(texture,title,width,height,this.titilePerc)
+                        this._drawForm(texture,form ,width,height)
+                    });
+
+
+
+
+                }
+
+                _drawTitle(texture,title,canvasWidth,canvasheight,perc){
+                    let value=title.value?title.value:"";
+                    let color=title.color?title.color:"#ffffff";
+                    let len=canvasWidth>canvasheight?canvasheight:canvasWidth;
+                    let fontSize=len*perc.fontSize;
+                    let fontTitle = `bold ${fontSize}px Open Sans`;
+                    texture.drawText(value, perc.x*canvasWidth, perc.y*canvasheight, fontTitle, color, null, true);
+                }
+
+
+                #defaultForm={
+                    data: [
+                        [
+                            {value:"",font:"",delta:{x:0,y:0},color:""}
+                        ]
+
+                    ],
+                    interval:{
+                        x:5,
+                        y:5
+                    },
+                    color:"#ffffff",
+                    font:"bold 50px Open Sans",
+                    indent:100,
+                    position:{
+                        x:0,
+                        y:0
+                    },
+                    perc:{
+                        x:0.15,
+                        y:0.23,
+                        interval:{
+                            x:0.156,
+                            y:0.156,
+                        },
+                        indent:0.152
+                    }
+
+                };
+                _drawForm(texture,form,width,height){
+                    try{
+                        let interval=form.interval?form.interval:{x:width*0.156,y:height*0.156};
+                        let position=form.position?form.position:{x:width*0.15,y:height*0.23};
+                        let lineBegin=position.x;
+                        let rowWidth=(width-lineBegin);
+                        let globalFont=form.font?form.font:"bold 50px Open Sans";
+                        let globalColor=form.color?form.color:"#ffffff";
+                        for(let i=0;i<form.data.length;i++){
+                            let colWidth=rowWidth/form.data[i].length;
+                            for(let j=0;j<form.data[i].length;j++){
+                                if(j==0){
+                                    position.x=lineBegin;
+                                    position.y+=interval.y;
+                                }else {
+                                    position.x+=colWidth;
+                                }
+
+                                let font=form.data[i][j].font?form.data[i][j].font:globalFont;
+                                let color=form.data[i][j].color?form.data[i][j].color:globalColor;
+                                form.data[i][j].delta=form.data[i][j].delta?form.data[i][j].delta:{};
+
+                                let deltaX=form.data[i][j].delta.x?form.data[i][j].delta.x:0;
+                                let deltaY=form.data[i][j].delta.y?form.data[i][j].delta.y:0;
+
+                                texture.drawText(form.data[i][j].value, position.x+deltaX , position.y+deltaY ,font ,color,null, false );
+                            }
+                        }
+
+                        texture.update();
+
+
+
+
+                    }catch (e) {
+                        console.log(e)
+                    }
+
+
+
+
+                }
+
+
+
+
+
+
+
+
+            }
+
+            var energyPanel=new CqPanel(scene,{
+                title:{
+                    value:"能源供应",
+
+                },
+                backGroud:{url:"./images/a.png"},
+                form:{
+                    data: [
+                        [
+                            {value:"总用电量"},
+                            {value:"230 ",color:"#77acff"},
+                            {value:"Kw",color:"#77acff"},
+                        ],
+                        [
+                            {value:"日用电量"},
+                            {value:"0.2 ",color:"#77acff"},
+                            {value:"Kwh",color:"#77acff"},
+                        ],
+                        [
+                            {value:"用电负载"},
+                            {value:"78.96",color:"#77acff"},
+                            {value:"%",color:"#77acff"},
+                        ],
+
+                    ],
+                }
+            })
+
+
+            energyPanel.position.y = 50;
+            energyPanel.position.z = -80;
+            energyPanel.position.x = 30;
+            energyPanel.rotation.y =Math.PI / 2;
+
+            var gasPanel=new CqPanel(scene,{
+                title:{
+                    value:"气体供应",
+
+                },
+                backGroud:{url:"./images/a.png"},
+                form:{
+                    data: [
+                        [
+                            {value:"总量"},
+                            {value:"2500 ",color:"#2eff34"},
+                            {value:"KL",color:"#21ff43"},
+                        ],
+                        [
+                            {value:"流量"},
+                            {value:"200 ",color:"#2eff34"},
+                            {value:"L/s",color:"#21ff43"},
+                        ],
+                        [
+                            {value:"气站压力"},
+                            {value:"347.7",color:"#2eff34"},
+                            {value:"Pa",color:"#2eff34"},
+                        ],
+
+                    ],
+                }
+            })
+
+
+            gasPanel.position.y = 50;
+            gasPanel.position.z = 130;
+            gasPanel.position.x = -30;
+            gasPanel.rotation.y =Math.PI / 2;
+
+
+
+
+
+            setInterval(function () {
+                textureContext.clearRect(0,0,981,637)
+                textureContext.drawImage(img, 0, 0,981,637);
+                texture.drawText("SMT生产线", 70, 150, fontTitle, "#ffffff", null, false);
+                texture.drawText("总产量", 150, 230, fontForm, "#ffffff", null, false);
+                texture.drawText("单位产量", 150, 330, fontForm, "#ffffff", null, false);
+                texture.drawText("转换率", 150, 430, fontForm, "#ffffff", null, false);
+                texture.drawText("良品率", 150, 530, fontForm, "#ffffff", null, false);
+                //
+                texture.drawText("MW", 850, 230, fontUnit, "#fff91a", null, false);
+                texture.drawText("KW/h", 850, 330, fontUnit, "#fff91a", null, false);
+                texture.drawText("%", 850, 430, fontUnit, "#fff91a", null, false);
+                texture.drawText("%", 850, 530, fontUnit, "#fff91a", null, false);
+                //
+                //
+                texture.drawText((总产量+=0.01).toFixed(2)+"", 500, 230, fontForm, "#fff91a", null, false);
+                texture.drawText((randomNum(1300,1000)/100).toFixed(2), 500, 330, fontForm, "#fff91a", null, false);
+                texture.drawText((randomNum(99999,99800)/1000).toFixed(3)+"", 500, 430, fontForm, "#fff91a", null, false);
+                texture.drawText((randomNum(99999,99800)/1000).toFixed(3)+"", 500, 530, fontForm, "#fff91a", null, false);
+
+                texture.update();
+            },1000)
 
 
 
