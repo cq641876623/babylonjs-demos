@@ -72,14 +72,14 @@
         line-height: 60px;
     }
     .header .header-center{
-        width: 50%;
+        width: 44%;
         height: 50px;
         /* border: 1px solid red; */
         position: relative;
     }
     .header .header-center .header-title{
         text-align: center;
-        color: #ffffff;
+        color: #6AC2D7;
         font-size: 20px;
         text-shadow: 0 0 0.3rem #00d8ff;
         line-height: 60px;
@@ -97,6 +97,12 @@
         width: 25%;
         height: 40px;
     }
+    
+    .header .header-right1{
+        width: 470px;
+        height: 40px;
+    }
+    
     .header .header-bottom{
         width: calc(100% - .4rem);
         height: 18px;
@@ -111,29 +117,31 @@
     }
 
     .right-btn {
-        padding: 5px 23px;
-        font-size: 15px;
+        padding: 5px 10px;
+        font-size: 12px;
         line-height: 30px;
         font-weight: 600;
         transition: 0.3s ease-in;
         border-radius: 6px;
-        color: #f8f9fa;
-        border-color: #f8f9fa;
-        border: 1px solid #f8f9fa;
+        color: #6AC2D7;
+        border-color: #6AC2D7;
+        border: 1px solid #6AC2D7;
         margin: 6px;
         text-decoration:none
     }
     .right-btn:hover {
-        color:  wheat;
+        color:  #fff;
         background-color: #fff;
         border-color: #fff;
+        background: linear-gradient(270deg, transparent, #6AC2D7);
+	    animation: btn-anim3 1s linear infinite;
+	    animation-delay: .02s
     }
 </style>
 <style>
     body{font-weight:100;margin:0}body{-webkit-tap-highlight-color:transparent;background-color:#222428;font-size:100%;font-family:Open Sans;height:100%}.loader{top:50%;left:50%;-webkit-transform:translate(-50%,-50%);-mos-transform:translate(-50%,-50%);transform:translate(-50%,-50%);text-align:center;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default;width:80%;overflow:visible}.loader,.loader div{position:absolute;height:36px}.loader div{width:30px;margin:0 10px;opacity:0;animation:move 2s linear infinite;-o-animation:move 2s linear infinite;-moz-animation:move 2s linear infinite;-webkit-animation:move 2s linear infinite;transform:rotate(180deg);-o-transform:rotate(180deg);-moz-transform:rotate(180deg);-webkit-transform:rotate(180deg);color:#fff;font-size:3em}.loader div:nth-child(8):before{background:#db2f00}.loader div:nth-child(8):before,.loader div:nth-child(9):before{content:'';position:absolute;bottom:-15px;left:0;width:30px;height:30px;border-radius:100%}.loader div:nth-child(9):before{background:#f2f2f2}.loader div:nth-child(10):before{bottom:-15px;height:30px;background:#13a3a5}.loader div:after,.loader div:nth-child(10):before{content:'';position:absolute;left:0;width:30px;border-radius:100%}.loader div:after{bottom:-40px;height:5px;background:#39312d}.loader div:nth-child(2){animation-delay:.2s;-o-animation-delay:.2s;-moz-animation-delay:.2s;-webkit-animation-delay:.2s}.loader div:nth-child(3){animation-delay:.4s;-o-animation-delay:.4s;-webkit-animation-delay:.4s}.loader div:nth-child(4){animation-delay:.6s;-o-animation-delay:.6s;-moz-animation-delay:.6s;-webkit-animation-delay:.6s}.loader div:nth-child(5){animation-delay:.8s;-o-animation-delay:.8s;-moz-animation-delay:.8s;-webkit-animation-delay:.8s}.loader div:nth-child(6){animation-delay:1s;-o-animation-delay:1s;-moz-animation-delay:1s;-webkit-animation-delay:1s}.loader div:nth-child(7){animation-delay:1.2s;-o-animation-delay:1.2s;-moz-animation-delay:1.2s;-webkit-animation-delay:1.2s}.loader div:nth-child(8){animation-delay:1.4s;-o-animation-delay:1.4s;-moz-animation-delay:1.4s;-webkit-animation-delay:1.4s}.loader div:nth-child(9){animation-delay:1.6s;-o-animation-delay:1.6s;-moz-animation-delay:1.6s;-webkit-animation-delay:1.6s}.loader div:nth-child(10){animation-delay:1.8s;-o-animation-delay:1.8s;-moz-animation-delay:1.8s;-webkit-animation-delay:1.8s}@keyframes move{0%{right:0;opacity:0}35%{right:41%}35%,65%{-webkit-transform:rotate(0);transform:rotate(0);opacity:1}65%{right:59%}to{right:100%;-webkit-transform:rotate(-180deg);transform:rotate(-180deg)}}@-webkit-keyframes move{0%,to{opacity:0}0%{right:0}35%{right:41%}35%,75%{-webkit-transform:rotate(0);transform:rotate(0);opacity:1}75%{right:59%}to{right:100%;-webkit-transform:rotate(-180deg);transform:rotate(-180deg);opacity:0}}
 </style>
 <body>
-
 <div id="loadingScreen">
     <div class="loader">
         <div> L </div>
@@ -148,18 +156,21 @@
         <div> </div>
     </div>
 </div>
+ 
 <div class="header">
-    <div class="header-left fl" id="time">2021-03-23&nbsp;&nbsp;15:23:25&nbsp;&nbsp;星期二&nbsp;&nbsp;</div>
+    <div class="header-left fl" id="time"><font color="#6AC2D7">2021-03-23&nbsp;&nbsp;15:23:25&nbsp;&nbsp;星期二&nbsp;&nbsp;</font></div>
     <div class="header-center fl">
         <div class="header-title">
             润阳世纪三期-鸟瞰
         </div>
         <div class="header-img"></div>
     </div>
-    <div class="header-right fl">
-        <div style="    color: white;display: flex;line-height: 60px;justify-content: space-around;">
-
-            <a  class="right-btn" href="https://www.ramo.top:8080/fws/images/babylonjs-demo.html">切换主题</a>
+    <div class="header-right1 fl">
+        <div style="color: white;display: flex;line-height: 60px;justify-content: space-around;">
+            <a  class="right-btn"  href="https://www.ramo.top:8080/fws/images/babylonjs-demo.html">
+                切换主题
+            </a>
+            <a  class="right-btn" href="https://www.ramo.top:8080/fws/images/demo/www/index.html" target="_blank">润阳全球数据</a>
             <a  class="right-btn" href="https://www.ramo.top:8080/fws/images/babylonjs-demo_v2.html">数据中心</a>
             <a  class="right-btn" href="https://www.ramo.top:8080/fws/images/earth/test4/view.html">生产线</a>
             <a  class="right-btn" href="https://www.ramo.top:8080/fws/images/earth/views-test/main1.html">返回上级</a>
@@ -292,7 +303,6 @@
 
 
 
-
             window.addEventListener("mousemove", function () {
                 // We try to pick an object
                 var pickResult = scene.pick(scene.pointerX, scene.pointerY);
@@ -328,7 +338,7 @@
 
             let material = new BABYLON.StandardMaterial("plane", scene);
             plane.material=material;
-            var texture= new BABYLON.DynamicTexture("dynamic texture", {height :637,width:981}, scene);
+            var texture= new BABYLON.DynamicTexture("dynamic texture", {height :637,width:981}, scene,true);
             var textureContext = texture.getContext();
             material.diffuseTexture = texture;
             material.emissiveTexture = material.diffuseTexture;
@@ -404,10 +414,10 @@
                 constructor(...args){
                     switch (args.length) {
                         case 1:
-                           return this._constructorSimple(...args);
+                            this._constructorSimple(...args);
                             break;
                         case 2:
-                            return this._constructorComplex(...args)
+                             this._constructorComplex(...args)
                             break;
                     }
 
@@ -468,14 +478,12 @@
                        option.canvasSize={};
                    }
                    if(!option.canvasSize.hasOwnProperty("width")||!option.canvasSize.hasOwnProperty("height")){
-                       var img = new Image();
-                       img.src = option.backGroud.url;
-                       option.canvasSize.width=option.canvasSize.width?option.canvasSize.width:img.width;
-                       option.canvasSize.height=option.canvasSize.height?option.canvasSize.height:img.height;
+                       option.canvasSize.width=option.canvasSize.width?option.canvasSize.width:1024;
+                       option.canvasSize.height=option.canvasSize.height?option.canvasSize.height:768;
                    }
                     let material = new BABYLON.StandardMaterial("plane", scene);
-                    let texture= new BABYLON.DynamicTexture("dynamic texture", {height :option.canvasSize.height,width:option.canvasSize.width}, scene);
-                    material.diffuseTexture = texture;
+                    this.texture= new BABYLON.DynamicTexture("dynamic texture", {height :option.canvasSize.height,width:option.canvasSize.width}, scene,true);
+                    material.diffuseTexture = this.texture;
                     material.emissiveTexture = material.diffuseTexture;
                     material.opacityTexture = material.diffuseTexture;
                     return material;
@@ -498,22 +506,32 @@
 
                 }
 
+                update(){
+
+                    let ctx=this.texture.getContext();
+                    let width=this.texture._canvas.width;
+                    let height=this.texture._canvas.height;
+                    ctx.clearRect(0,0,width,height);
+                    this._drawCanvas(this.texture,this.#option);
+                }
 
 
 
-
+                getPanel(){
+                    return this.panel;
+                }
 
 
                 _drawCanvas(texture,option){
                     let ctx=texture.getContext();
                     let width=texture._canvas.width;
                     let height=texture._canvas.height;
-
+                    let that=this;
                     this._loadBackGroudImg(this.#option,texture,()=>{
                         let title=option.title?option.title:{};
                         let form=option.form?option.form:this.#defaultForm;
-                        this._drawTitle(texture,title,width,height,this.titilePerc)
-                        this._drawForm(texture,form ,width,height)
+                        that._drawTitle(texture,title,width,height,this.titilePerc)
+                        that._drawForm(texture,form ,width,height)
                     });
 
 
@@ -612,10 +630,14 @@
 
             }
 
-            var energyPanel=new CqPanel(scene,{
+            var energ=new CqPanel(scene,{
                 title:{
                     value:"能源供应",
 
+                },
+                canvasSize:{
+                    width:1280,
+                    height:728
                 },
                 backGroud:{url:"./images/a.png"},
                 form:{
@@ -639,6 +661,7 @@
                     ],
                 }
             })
+            var energyPanel=energ.getPanel();
 
 
             energyPanel.position.y = 50;
@@ -646,10 +669,14 @@
             energyPanel.position.x = 30;
             energyPanel.rotation.y =Math.PI / 2;
 
-            var gasPanel=new CqPanel(scene,{
+            var gas=new CqPanel(scene,{
                 title:{
                     value:"气体供应",
 
+                },
+                canvasSize:{
+                    width:1280,
+                    height:728
                 },
                 backGroud:{url:"./images/a.png"},
                 form:{
@@ -673,7 +700,7 @@
                     ],
                 }
             })
-
+            var gasPanel=gas.getPanel();
 
             gasPanel.position.y = 50;
             gasPanel.position.z = 130;
@@ -685,6 +712,8 @@
 
 
             setInterval(function () {
+                energ.update()
+                gas.update()
                 textureContext.clearRect(0,0,981,637)
                 textureContext.drawImage(img, 0, 0,981,637);
                 texture.drawText("SMT生产线", 70, 150, fontTitle, "#ffffff", null, false);

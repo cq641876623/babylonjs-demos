@@ -77,7 +77,7 @@
     }
     .header .header-center .header-title{
         text-align: center;
-        color: #ffffff;
+        color: #6AC2D7;
         font-size: 20px;
         text-shadow: 0 0 0.3rem #00d8ff;
         line-height: 60px;
@@ -115,16 +115,19 @@
         font-weight: 600;
         transition: 0.3s ease-in;
         border-radius: 6px;
-        color: #f8f9fa;
-        border-color: #f8f9fa;
-        border: 1px solid #f8f9fa;
+        color: #6AC2D7;
+        border-color: #6AC2D7;
+        border: 1px solid #6AC2D7;
         margin: 6px;
         text-decoration:none
     }
     .right-btn:hover {
-        color:  wheat;
+        color:  #fff;
         background-color: #fff;
         border-color: #fff;
+        background: linear-gradient(270deg, transparent, #6AC2D7);
+	    animation: btn-anim3 1s linear infinite;
+	    animation-delay: .02s
     }
 </style>
 <style>
@@ -147,7 +150,7 @@
     </div>
 </div>
 <div class="header">
-    <div class="header-left fl" id="time">2021-03-23&nbsp;&nbsp;15:23:25&nbsp;&nbsp;星期二&nbsp;&nbsp;</div>
+    <div class="header-left fl" id="time" ><font color="#6AC2D7">2021-03-23&nbsp;&nbsp;15:23:25&nbsp;&nbsp;星期二&nbsp;&nbsp;</font></div>
     <div class="header-center fl">
         <div class="header-title">
             润阳世纪三期-数据中心
@@ -172,7 +175,7 @@
 
 </video>
 
-<div class="heatmap" style="width: 700px;height: 500px;position: fixed;top: 0;left: 0;border: 5px solid red;">
+<div class="heatmap" style="width: 700px;height: 500px;position: fixed;top: 0;left: 0;display: none">
 </div>
 <script>
     var heatmapData1="{\n" +
