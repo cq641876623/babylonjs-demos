@@ -1,0 +1,598 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<!-- 设置IE渲染 -->
+    	<meta http-equiv="X-UA-Compatible" content="IE=Edge，chrome=1">
+		<title>润阳世纪三期-数据中心</title>
+		<link rel="stylesheet" href="css/public1.css">
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			body{
+				width: 100%;
+				height: 100%;
+				position: absolute;
+			}
+			#box{				
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+	<div id="box" class="box"></div>
+	<script src="js/jquery-1.11.0.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/echarts-gl.js" type="text/javascript" charset="utf-8"></script>	
+	<script type="text/javascript">
+	var config = {
+	    color: '#750be8',
+	    levels: 1,
+	    intensity: 4,
+	    threshold: 0.01
+	}
+	
+	var canvas = document.createElement('canvas');
+	canvas.width = 2048;
+	canvas.height = 1024;
+	context = canvas.getContext("2d");
+	
+	context.lineWidth = 0.5;
+	context.strokeStyle = config.color;
+	context.fillStyle = config.color;
+	context.shadowColor = config.color;			
+
+	$.when(
+	    $.getScript('./js/world-gl-map/d3-contour.js'),
+	    $.getScript('./js/world-gl-map/d3_geo.js'),
+	    $.getScript('./js/world-gl-map/d3_timer.js')
+	).done(function () {
+	    image('img/8.png').then(function(image) {
+	        var m = image.height,
+	            n = image.width,
+	            values = new Array(n * m),
+	            contours = d3.contours().size([n, m]).smooth(true),
+	            projection = d3.geoIdentity().scale(canvas.width / n),
+	            path = d3.geoPath(projection, context);
+	        for (var j = 0, k = 0; j < m; ++j) {
+	            for (var i = 0; i < n; ++i, ++k) {
+	            	values[k] = image.data[(k << 2)] / 255;
+	            }
+	        }
+	
+	        var opt = {
+	            image: canvas
+	        }
+	
+	        var results = [];
+	        
+	        function update(threshold, levels) {
+	            context.clearRect(0, 0, canvas.width, canvas.height);
+	            var thresholds = [];
+	            for (var i = 0; i < levels; i++) {
+	                thresholds.push((threshold + 1 / levels * i) % 1);
+	            }
+	            results = contours.thresholds(thresholds)(values);
+	            redraw();
+	        }
+	
+	        function redraw() {
+	            results.forEach(function (d, idx) {
+	                context.beginPath();
+	                path(d);
+	                context.globalAlpha = 1;
+	                context.stroke();
+	                if (idx > config.levels / 5 * 3) {
+	                    context.globalAlpha = 0.01;
+	                    context.fill();
+	                }
+	            });
+	            opt.onupdate();
+	        }
+	        
+	        d3.timer(function(t) {
+	            var threshold = (t % 10000) / 10000;
+	            update(threshold, 1);
+	        });
+	
+	        initCharts(opt);
+	
+	        update(config.threshold, config.levels);
+	
+	    });		
+	
+	    function image(url) {
+	        return new Promise(function(resolve) {
+	            var image = new Image();
+	            image.src = url;
+	            image.onload = function() {
+	            var canvas = document.createElement("canvas");
+	            canvas.width = image.width / 8;
+	            canvas.height = image.height / 8;
+	            var context = canvas.getContext("2d");
+	            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+	            resolve(context.getImageData(0, 0, canvas.width, canvas.height));
+	            };
+	        });
+	    }
+	
+	    function initCharts(opt) {
+			var myChart = echarts.init(document.getElementsByClassName("box")[0])
+			let canvas2 = document.createElement('canvas');
+			let mapChart = echarts.init(canvas2, null, {
+			    width: 2048,
+			    height: 1024
+			});
+			
+			
+	        var contourChart = echarts.init(document.createElement('canvas'), null, {
+	            width: 2048,
+	            height: 1024
+	        });
+	
+	        var img = new echarts.graphic.Image({
+	            style: {
+	                image: opt.image,
+	                x: -1,
+	                y: -1,
+	                width: opt.image.width + 2,
+	                height: opt.image.height + 2
+	            }
+	        });
+	        contourChart.getZr().add(img);
+	
+	        opt.onupdate = function () {
+	            img.dirty();
+	        };
+	
+			var option = {
+				backgroundColor:'rgba(128, 128, 128, 0.1)', //rgba设置透明度0.1 
+			    title: {
+			        textStyle: {
+			            color: '#fff'
+			        }
+			    },
+			    tooltip: {
+			    	formatter: function(param) {
+			    		if(param.name != '中国盐城'){
+			    			var imgPath = "";
+			    			if(param.name.indexOf("日本") > -1){
+			    				imgPath = "rb.jpeg";
+			    			}else if(param.name.indexOf("印度尼西亚") > -1){
+			    				imgPath = "ydnxy.gif";
+			    			}else if(param.name.indexOf("欧盟") > -1){
+			    				imgPath = "om.jpg";
+			    			}else if(param.name.indexOf("老挝") > -1){
+			    				imgPath = "lw.jpg";
+			    			}else if(param.name.indexOf("缅甸") > -1){
+			    				imgPath = "md.jpg";
+			    			}else if(param.name.indexOf("印度") > -1){
+			    				imgPath = "yd.jpg";
+			    			}else if(param.name.indexOf("泰国") > -1){
+			    				imgPath = "tg.jpg";
+			    			}else if(param.name.indexOf("巴基斯坦") > -1){
+			    				imgPath = "bjst.jpeg";
+			    			}else if(param.name.indexOf("伊朗") > -1){
+			    				imgPath = "yl.jpg";
+			    			}else if(param.name.indexOf("南非") > -1){
+			    				imgPath = "nf.jpg";
+			    			}else if(param.name.indexOf("俄罗斯") > -1){
+			    				imgPath = "els.jpeg";
+			    			}else if(param.name.indexOf("德国") > -1){
+			    				imgPath = "dg.jpg";
+			    			}else if(param.name.indexOf("新加坡") > -1){
+			    				imgPath = "xjp.jpg";
+			    			}else if(param.name.indexOf("美国") > -1){
+			    				imgPath = "mg.jpg";
+			    			}else if(param.name.indexOf("委内瑞拉") > -1){
+			    				imgPath = "wnrl.gif";
+			    			}else if(param.name.indexOf("巴西") > -1){
+			    				imgPath = "bx.jpg";
+			    			}else if(param.name.indexOf("阿根廷") > -1){
+			    				imgPath = "agt.jpeg";
+			    			}else if(param.name.indexOf("加拿大") > -1){
+			    				imgPath = "jnd.jpeg";
+			    			}else if(param.name.indexOf("墨西哥") > -1){
+			    				imgPath = "mxg.jpg";
+			    			}else if(param.name.indexOf("新西兰") > -1){
+			    				imgPath = "xxl.jpg";
+			    			}else if(param.name.indexOf("澳大利亚") > -1){
+			    				imgPath = "adly.jpeg";
+			    			}else if(param.name.indexOf("意大利") > -1){
+			    				imgPath = "ydl.jpg";
+			    			}else if(param.name.indexOf("英国") > -1){
+			    				imgPath = "yg.jpg";
+			    			}
+	                    	return '<div>交易额<br/><img src="images/' + imgPath + '" width="20" height="10">&nbsp;' + param.name + "<br/></div>";  
+			    		}else{
+			    			
+			    			return '<div>总部 <br/><img src="images/zg.jpg" width="20" height="10">&nbsp;'+ param.name + "<br/></div>";
+			    		}
+	                }
+			    },
+			    globe: {
+					//environment:'img/charity_top.png',
+ 					//heightTexture: 'img/bathymetry_bw_composite_4k-back.jpg',
+					baseTexture: 'img/8.png',
+			        shading: 'lambert',
+			        light: { // 光照阴影
+			            main: {
+			                color: 'blue', // 光照颜色
+			                intensity: 14.2, // 光照强度
+			                shadowQuality: 'ultra', //阴影亮度
+			                shadow: true, // 是否显示阴影
+			                alpha: 40,
+			                beta: -30
+			            },
+			            ambient: {
+			                intensity: 4.6
+			            }
+			        },
+			        viewControl: {
+			            alpha: 30,
+			            beta: 160,
+			            autoRotate: true,
+			            autoRotateAfterStill: 10,
+			            distance: 240,
+			            autoRotateSpeed:4,
+			            targetCoord: [120.50, 33.20], //定位到哪里
+			        },
+			        postEffect: {//为画面添加高光，景深，环境光遮蔽（SSAO），调色等效果
+		                enable: true, //是否开启
+		                SSAO: {//环境光遮蔽
+		                    radius: 1,//环境光遮蔽的采样半径。半径越大效果越自然
+		                    intensity: 1,//环境光遮蔽的强度
+		                    enable: true
+		                }
+		            },
+	                layers: [{
+	                    type: 'blend',
+	                    blendTo: 'emission',
+	                    texture: contourChart,
+	                    intensity: config.intensity
+	                }]
+			    },
+			    series: [{
+			        name: 'lines3D',
+			        type: 'lines3D',
+			        coordinateSystem: 'globe',
+			        effect: {
+			            show: true,
+			            period: 2,
+			            trailWidth: 3,
+			            trailLength: 0.5,
+			            trailOpacity: 1,
+			            trailColor: '#0087f4'
+			        },
+			        blendMode: 'lighter',
+			        lineStyle: {
+			            width: 1,
+			            color: '#0087f4',
+			            opacity: 0.2
+			        },
+			        data: [],
+			        silent: false
+			    },{ //点
+			        name: '',
+			        type: 'scatter3D',
+			        blendMode: 'lighter',
+					coordinateSystem: 'globe',
+					showEffectOn: 'render',
+			        zlevel: 2,
+			        effectType:"ripple", 
+			        symbolSize: 18,
+			        rippleEffect: {
+			            period: 4,
+			            scale: 4,
+			            brushType: 'fill'
+			        },
+			        //showEffectOn: 'hover',
+			        hoverAnimation: false,
+			        label: {
+			            normal: {
+			                show: true,
+			                position: 'top',
+							formatter:function(params){
+								if(params.dataIndex == 0){
+									return '中国盐城'
+								}else if(params.dataIndex == 1){
+									return '日本'
+								}else if(params.dataIndex == 2){
+									return '印度尼西亚'
+								}else if(params.dataIndex == 3){
+									return '欧盟'
+								}else if(params.dataIndex == 4){
+									return '老挝'
+								}else if(params.dataIndex == 5){
+									return '缅甸'
+								}else if(params.dataIndex == 6){
+									return '印度'
+								}else if(params.dataIndex == 7){
+									return '巴基斯坦'
+								}else if(params.dataIndex == 8){
+									return '伊朗'
+								}else if(params.dataIndex == 9){
+									return '南非'
+								}else if(params.dataIndex == 10){
+									return '俄罗斯'
+								}else if(params.dataIndex == 11){
+									return '德国'
+								}else if(params.dataIndex == 12){
+									return '新加坡'
+								}else if(params.dataIndex == 13){
+									return '美国'
+								}else if(params.dataIndex == 14){
+									return '委内瑞拉'
+								}else if(params.dataIndex == 15){
+									return '巴西'
+								}else if(params.dataIndex == 16){
+									return '阿根廷'
+								}else if(params.dataIndex == 17){
+									return '澳大利亚'
+								}else if(params.dataIndex == 18){
+									return '新西兰'
+								}else if(params.dataIndex == 19){
+									return '加拿大'
+								}else if(params.dataIndex == 20){
+									return '墨西哥'
+								}else if(params.dataIndex == 21){
+									return '泰国'
+								}else if(params.dataIndex == 22){
+									return '意大利'
+								}else if(params.dataIndex == 23){
+									return '英国'
+								}
+							},
+			                textStyle: {
+			                    fontSize: 18,
+			                    color: '#f5d909',
+			                    fontWeight:'bold',
+			                    //backgroundColor:'rgba(255,255,255,0.2)'
+								backgroundColor:'transparent'
+			                }
+			            }
+			        },
+			        itemStyle: {
+			            normal: {
+			                color: 'rgb(29,183,255)'
+			            }
+			        },
+					data:[
+						{name: "中国盐城", value: [120.50, 33.20] },
+						{name: "日本:3589万", value: [139.46, 35.42]},
+						{name: "印度尼西亚:689万", value: [116.58, 6.10]},
+						{name: "欧盟:5890万", value: [21.25, 50.78]},
+						{name: "老挝:790万", value: [102.54,20.15]},
+						{name: "缅甸:490万", value: [95.62,21.12]},
+						{name: "印度:1090万", value: [81.20,23.85]},
+						{name: "巴基斯坦:1890万", value: [69.43,28.50]},
+						{name: "伊朗:920万", value: [53.38,31.06]},
+						{name: "南非:1290万", value: [21.00,-30.07]},
+						{name: "俄罗斯:2890万", value: [101.07,61.54]},
+						{name: "德国:1090万", value: [9.38,49.85]},
+						{name: "新加坡:590万", value: [102.54,3.83]},
+						{name: "美国:1090万", value: [-103.21,37.65]},
+						{name: "委内瑞拉:280万", value: [-64.65,8.25]},
+						{name: "巴西:190万", value: [-52.58,-5.19]},
+						{name: "阿根廷:1290万", value: [-64.37,-35.93]},
+						{name: "澳大利亚:2090万", value: [140.49,-25.93]},
+						{name: "新西兰:1290万", value:[170.67,-44.27]},
+						{name: "加拿大:1900万", value:[-104.11,53.57]},
+						{name: "墨西哥:1290万", value:[-104.40,20.93]},
+						{name: "泰国:1398万", value:[101.89,16.03]},
+						{name: "意大利:3204万", value:[10.89,44.13]},
+						{name: "英国:2960万", value:[-0.29,52.36]}
+					]
+	    		}]
+			}
+			
+			// 随机数据
+			option.series[0].data = [
+				{
+					coords:[
+						[120.50, 33.20],
+						[101.89,16.03]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},
+				{
+					coords:[
+						[120.50, 33.20],
+						[139.46, 35.42]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[116.58, 6.10]						
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[21.25, 50.78]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[102.54,20.15]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[95.62,21.12]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[81.20,23.85]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[69.43,28.50]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[53.38,31.06]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[21.00,-30.07]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[101.07,61.54]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[9.38,49.85]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[102.54,3.83]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[-103.21,37.65]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[-64.65,8.25]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[-52.58,-5.19]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[-64.37,-35.93]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[140.49,-25.93]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[170.67,-44.27]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[-104.11,53.57]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[-104.40,20.93]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[10.89,44.13]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				},	
+				{
+					coords:[
+						[120.50, 33.20],
+						[-0.29,52.36]
+					],
+					value: (Math.random() * 3000).toFixed(2)
+				}
+			]
+	
+			//for (let i = 0; i < 20; i++) {
+			   // option.series[0].data = option.series[0].data.concat(rodamData())
+			//}
+	
+			function rodamData() {
+			    let name = '随机点' + Math.random().toFixed(5) * 100000
+			    // let longitude = Math.random() * 62 + 73
+			    let longitude = 120.50
+			    let longitude2 = Math.random() * 360 - 180
+			    // let latitude = Math.random() * 50 + 3.52
+			    let latitude = 33.20
+			    let latitude2 = Math.random() * 180 - 90
+			    return {
+			        coords: [
+			        	[longitude, latitude],
+			            [longitude2, latitude2]
+			        ],
+			        value: (Math.random() * 3000).toFixed(2)
+			    }
+			}
+			
+			myChart.setOption(option);
+			myChart.on('click', function (params) {
+				console.log(params);
+				if(params.data.name=="中国盐城"){
+					window.open("https://www.ramo.top:8080/fws/images/babylonjs-demo-factory.html",true)
+				}
+			});
+
+
+
+			window.addEventListener("resize", function() {                
+				myChart.resize();           
+			});
+	    }
+			
+	})			
+		</script>
+	</body>
+</html>
+

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)https://www.jq22.com/demo/echartsSzjc202012202211/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>水质监测</title>
+<link rel="stylesheet" href="./index.css">
+<script src="./jquery-1.10.2.js"></script>
+ <script src="./jquery.min(1).js"></script>
+ <!--主文件-->
+ <script src="../threeJs/build/three.js"></script>
+ <!--检查webGL环境-->
+ <script src="../threeJs/js/Detector.js"></script>
+
+ <script src="../threeJs/js/loaders/LoaderSupport.js"></script>
+
+ <script src="../threeJs/js/cameras/CinematicCamera.js"></script>
+
+
+ <!--外部3D模型导入-->
+ <!--obj材质导入-->
+
+ <!--obj对象导入-->
+ <script src="../threeJs/js/loaders/OBJLoader.js"></script>
+ <!--GLTF或GLB对象导入-->
+ <script src="../threeJs/js/loaders/GLTFLoader.js"></script>
+
+ <!--辅助-->
+ <!--控制文件-->
+ <script src="../threeJs/js/controls/OrbitControls.js"></script>
+
+ <!--鼠标点击交互事件辅助-->
+ <script src="../threeJs/js/shaders/CopyShader.js"></script>
+ <script src="../threeJs/js/shaders/SMAAShader.js"></script>
+ <script src="../threeJs/js/shaders/FXAAShader.js"></script>
+
+ <script src="../threeJs/js/postprocessing/EffectComposer.js"></script>
+
+ <script src="../threeJs/js/shaders/FXAAShader.js"></script>
+
+ <script src="../threeJs/js/postprocessing/RenderPass.js"></script>
+ <script src="../threeJs/js/postprocessing/ShaderPass.js"></script>
+ <script src="../threeJs/js/postprocessing/OutlinePass.js"></script>
+ <script src="../threeJs/js/postprocessing/SMAAPass.js"></script>
+ <script src="../threeJs/js/postprocessing/SSAARenderPass.js"></script>
+ <script src="../threeJs/js/postprocessing/MaskPass.js"></script>
+
+
+ <script src="../threeJs/js/postprocessing/UnrealBloomPass.js"></script>
+ <script src="../threeJs/js/shaders/ConvolutionShader.js"></script>
+ <script src="../threeJs/js/shaders/LuminosityHighPassShader.js"></script>
+
+
+
+ <script src="../threeJs/js/controls/PointerLockControls.js"></script>
+
+ <script src="../threeJs/js/libs/stats.min.js"></script>
+ <script src="../threeJs/js/libs/dat.gui.min.js"></script>
+ <script src="../threeJs/js/postprocessing/OutlinePass.js"></script>
+
+ <script src="https://cdn.bootcdn.net/ajax/libs/zrender/4.3.2/zrender.min.js"></script>
+</head>
+<body style="">
+<div class="content-body">
+<div class="header">
+<div class="header-left">
+<span>水质情况实时监测预警系统</span>
+</div>
+<div class="header-time">
+<span id="time">2021年03月01日&nbsp;&nbsp;15:39:00&nbsp;&nbsp;星期一&nbsp;&nbsp;</span>
+</div>
+</div>
+<div class="content">
+<div class="content-con">
+<div class="left-body">
+<div class="left-top public-bg">
+<div class="public-title">重点水质量检测区</div>
+<div class="top-body">
+<div class="top-left">
+<div class="top-left-title">
+<h6>注水量</h6>
+<span><b>1756</b>m3/h</span>
+<img src="./pictre.png" alt="">
+</div>
+</div>
+<div class="top-right">
+<div class="top-left-title">
+<h6>泄水量</h6>
+<span><b>3520</b>m3/h</span>
+<img src="./pictre.png" alt="">
+</div>
+</div>
+</div>
+</div>
+<div class="left-con public-bg">
+<div class="public-title">水质量分布情况</div>
+<div class="title-nav" id="leida" _echarts_instance_="ec_1614584215149" style="-webkit-tap-highlight-color: transparent; user-select: none;"><div style="position: relative; overflow: hidden; width: 422px; height: 271px; padding: 0px; margin: 0px; border-width: 0px;"><canvas data-zr-dom-id="zr_0" width="422" height="271" style="position: absolute; left: 0px; top: 0px; width: 422px; height: 271px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas></div></div>
+</div>
+<div class="left-bottom public-bg">
+<div class="public-title">企业污染排放情况</div>
+<div class="title-nav" id="wuran" _echarts_instance_="ec_1614584215150" style="-webkit-tap-highlight-color: transparent; user-select: none; position: relative;"><div style="position: relative; overflow: hidden; width: 422px; height: 223px; padding: 0px; margin: 0px; border-width: 0px;"><canvas data-zr-dom-id="zr_0" width="422" height="223" style="position: absolute; left: 0px; top: 0px; width: 422px; height: 223px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas><canvas data-zr-dom-id="zr_1" width="422" height="223" style="position: absolute; left: 0px; top: 0px; width: 422px; height: 223px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas></div><div></div></div>
+</div>
+</div>
+<div class="center-body">
+<div class="map" id="map" _echarts_instance_="ec_1614584215148" style="-webkit-tap-highlight-color: transparent; user-select: none;">
+ <div style="position: relative; overflow: hidden; width: 1037px; height: 792px; padding: 0px; margin: 0px; border-width: 0px; cursor: default;">
+  <canvas data-zr-dom-id="zr_0" width="1037" height="792" style="position: absolute; left: 0px; top: 0px; width: 1037px; height: 792px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas>
+  <canvas data-zr-dom-id="zr_2" width="1037" height="792" style="position: absolute; left: 0px; top: 0px; width: 1037px; height: 792px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas>
+  <canvas data-zr-dom-id="zr_3" width="1037" height="792" style="position: absolute; left: 0px; top: 0px; width: 1037px; height: 792px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas>
+ </div>
+</div>
+</div>
+<div class="right-body">
+<div class="right-top public-bg">
+<div class="public-title">水质污染TOP5</div>
+<div class="title-nav">
+<div class="top5-ul">
+<ul>
+<li>
+<span>1</span>
+<span>严重</span>
+<span>北京市</span>
+<span>房山区</span>
+<span>重度污染</span>
+<span>15公里</span>
+</li>
+<li>
+<span>2</span>
+<span>严重</span>
+<span>上海市</span>
+<span>闵行区</span>
+<span>重度污染</span>
+<span>10公里</span>
+</li>
+<li>
+<span>3</span>
+<span>严重</span>
+<span>北京市</span>
+<span>朝阳区</span>
+<span>重度污染</span>
+<span>9.3公里</span>
+</li>
+<li>
+<span>4</span>
+<span>中度</span>
+<span>广东省</span>
+<span>广州市</span>
+<span>中度污染</span>
+<span>8.6公里</span>
+ </li>
+<li>
+<span>5</span>
+<span>中度</span>
+<span>浙江省</span>
+<span>杭州市</span>
+<span>中度污染</span>
+<span>6.6公里</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="right-con public-bg">
+<div class="public-title">水质类别占比</div>
+<div class="title-nav" id="huaxing" _echarts_instance_="ec_1614584215151" style="-webkit-tap-highlight-color: transparent; user-select: none;"><div style="position: relative; overflow: hidden; width: 422px; height: 168px; padding: 0px; margin: 0px; border-width: 0px;"><canvas data-zr-dom-id="zr_0" width="422" height="168" style="position: absolute; left: 0px; top: 0px; width: 422px; height: 168px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas></div></div>
+</div>
+<div class="right-bottom public-bg">
+<div class="public-title">主要地区水流量</div>
+<div class="title-nav" id="zhexian" _echarts_instance_="ec_1614584215152" style="-webkit-tap-highlight-color: transparent; user-select: none; position: relative;"><div style="position: relative; overflow: hidden; width: 422px; height: 279px; padding: 0px; margin: 0px; border-width: 0px;"><canvas data-zr-dom-id="zr_0" width="422" height="279" style="position: absolute; left: 0px; top: 0px; width: 422px; height: 279px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas></div><div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<script src="./echarts-4.2.1.min.js"></script><script src="./echarts.min.js"></script>
+<script type="text/javascript" src="./china.js"></script>
+<script type="text/javascript" src="./index.js"></script>
+<script>
+    //顶部时间
+    function getTime(){
+        var myDate = new Date();
+        var myYear = myDate.getFullYear(); //获取完整的年份(4位,1970-????)
+        var myMonth = myDate.getMonth()+1; //获取当前月份(0-11,0代表1月)
+        var myToday = myDate.getDate(); //获取当前日(1-31)
+        var myDay = myDate.getDay(); //获取当前星期X(0-6,0代表星期天)
+        var myHour = myDate.getHours(); //获取当前小时数(0-23)
+        var myMinute = myDate.getMinutes(); //获取当前分钟数(0-59)
+        var mySecond = myDate.getSeconds(); //获取当前秒数(0-59)
+        var week = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+        var nowTime;
+
+        nowTime = myYear+'年'+fillZero(myMonth)+'月'+fillZero(myToday)+'日'+'&nbsp;&nbsp;'+fillZero(myHour)+':'+fillZero(myMinute)+':'+fillZero(mySecond)+'&nbsp;&nbsp;'+week[myDay]+'&nbsp;&nbsp;';
+        //console.log(nowTime);
+        $('#time').html(nowTime);
+    };
+    function fillZero(str){
+        var realNum;
+        if(str<10){
+            realNum	= '0'+str;
+        }else{
+            realNum	= str;
+        }
+        return realNum;
+    }
+    setInterval(getTime,1000);
+</script>
+<script>
+
+
+ var container, stats;
+ var params = {
+  lightColor:0xffffff,
+  intensity:2,
+  projection: 'normal',
+  background: false,
+  exposure: 0.9,
+  bloomStrength: 0.4,
+  bloomThreshold: 0.22,
+  bloomRadius: 0.4
+ };
+
+ var can=document.getElementById("can");
+ if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+ var scene = new THREE.Scene();
+ var camera = new THREE.PerspectiveCamera( 45,window.innerWidth / window.innerHeight, 1, 10000 );
+ camera.position.set( 100, 100, 100 );
+ var renderer = new THREE.WebGLRenderer({ antialias: true } );
+ renderer.toneMapping = THREE.ReinhardToneMapping;
+ renderer.setSize( window.innerWidth, window.innerHeight  );
+ // renderer.shadowMap.type = 0;
+ document.body.appendChild( renderer.domElement );
+ var controls=  new THREE.OrbitControls( camera,renderer.domElement);
+ controls.keys = {
+  LEFT: 37, //left arrow
+  UP: 38, // up arrow
+  RIGHT: 39, // right arrow
+  BOTTOM: 40 // down arrow
+ }
+ controls.mouseButtons = {
+  LEFT: THREE.MOUSE.ROTATE,
+  MIDDLE: THREE.MOUSE.PAN,
+ }
+ controls.panSpeed=2
+ controls.rotationSpeed=2
+ controls.update();
+
+ var light = new THREE.AmbientLight( params.lightColor  ); // soft white light
+ light.intensity=params.intensity
+ light.position.set( 100, 100, 100 );
+ // light.castShadow = true;
+ scene.add( light );
+
+ var raycaster = new THREE.Raycaster();
+
+ var mouse = new THREE.Vector2();
+
+ var onTouchMove=function(event) {
+  var x, y;
+  if ( event.changedTouches ) {
+
+   x = event.changedTouches[ 0 ].pageX;
+   y = event.changedTouches[ 0 ].pageY;
+
+  } else {
+
+   x = event.clientX;
+   y = event.clientY;
+
+  }
+  mouse.x = ( x / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( y /  window.innerHeight ) * 2 + 1;
+
+
+ }
+
+
+
+ var outlinePass = new THREE.OutlinePass( new THREE.Vector2( window.innerWidth, window.innerHeight ), scene, camera );
+ outlinePass.edgeStrength = 4;//包围线浓度
+ outlinePass.edgeGlow = 0.0;//边缘线范围
+ outlinePass.edgeThickness = 1;//边缘线浓度
+ outlinePass.pulsePeriod = 0;//包围线闪烁频率
+ outlinePass.visibleEdgeColor.set( '#04fdff' );//包围线颜色
+ outlinePass.hiddenEdgeColor.set( '#190a05' );//被遮挡的边界线颜色
+
+
+
+
+ function onClickObj(ev) {
+  raycaster.setFromCamera( mouse,camera );
+  var intersects = raycaster.intersectObjects( scene.children,true );
+  if(intersects.length > 0){
+   outlinePass.selectedObjects.pop()
+   outlinePass.selectedObjects.push(intersects[0].object)
+   console.log("触发点击事件",intersects[0]);
+  }
+
+
+
+
+ }
+
+
+
+
+
+
+
+
+
+ var light2 = new THREE.PointLight( 0xff0000, 1, 100 );
+ light2.position.set( 50, 50, 50 );
+ scene.add( light2 );
+
+
+
+
+ renderer.setPixelRatio( window.devicePixelRatio );
+ // renderer.shadowMap.enabled = true;
+
+ var renderScene = new THREE.RenderPass( scene, camera );
+
+ var effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
+ effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
+ effectFXAA.renderToScreen = true;
+
+ const pass = new THREE.SMAAPass( window.innerWidth * renderer.getPixelRatio(), window.innerHeight * renderer.getPixelRatio() );
+ pass.renderToScreen = true;
+
+ var bloomPass = new THREE.UnrealBloomPass( new THREE.Vector2( window.innerWidth,window.innerHeight), params.bloomStrength, params.bloomRadius, params.bloomThreshold ); //1.0, 9, 0.5, 512);
+
+ var composer = new THREE.EffectComposer( renderer );
+
+
+
+
+ composer.addPass( renderScene );
+
+
+
+
+
+
+ // composer.addPass( pass );
+
+ var ssaaRenderPass = new THREE.SSAARenderPass( scene, camera );
+ // ssaaRenderPass.unbiased = false;
+
+
+ copyPass = new THREE.ShaderPass( THREE.CopyShader );
+ // copyPass.renderToScreen = true;
+ // composer.addPass( copyPass );
+ // composer.addPass( effectFXAA );
+
+ // composer.addPass( pass );
+ composer.addPass( bloomPass );
+ composer.addPass( outlinePass );
+ // composer.addPass( ssaaRenderPass );
+
+
+ // texture.encoding = THREE.sRGBEncoding;
+ // this.composer.renderer.outputEncoding = THREE.sRGBEncoding
+ // THREE.Texture.encoding =THREE.sRGBEncoding
+
+ renderer.domElement.addEventListener( 'mousemove', onTouchMove,false );
+ renderer.domElement.addEventListener( 'click', onClickObj ,false);
+
+ var gui = new dat.GUI();
+
+ gui.addColor( params, 'lightColor' ).onChange(function (value) {
+  light.color.setHex(value)
+ });
+ gui.add( params, 'intensity', 0.001, 10 ).onChange(function (value) {
+  light.intensity=Number( value );
+ });
+
+ gui.add( params, 'exposure', 0.1, 2 );
+
+ gui.add( params, 'bloomThreshold', 0.0, 1.0 ).onChange( function ( value ) {
+
+  bloomPass.threshold = Number( value );
+
+ } );
+
+ gui.add( params, 'bloomStrength', 0.0, 3.0 ).onChange( function ( value ) {
+
+  bloomPass.strength = Number( value );
+
+ } );
+
+ gui.add( params, 'bloomRadius', 0.0, 1.0 ).onChange( function ( value ) {
+
+  bloomPass.radius = Number( value );
+
+ } );
+
+ gui.open();
+
+ function animateNoComposer() {
+  requestAnimationFrame( animateNoComposer );
+  controls.update();
+  composer.render();
+ }
+ animateNoComposer()
+
+
+
+
+
+ var loader = new THREE.ObjectLoader();
+ loader.load(
+         // 资源的URL
+         "scene.json",
+
+         // onLoad回调
+         // Here the loaded data is assumed to be an object
+         function ( obj ) {
+          scene.add( obj );
+          camera.lookAt(scene.position)
+         },
+
+         // onProgress回调
+         function ( xhr ) {
+          console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+         },
+
+
+
+         // onError回调
+         function ( err ) {
+          console.error( 'An error happened' );
+         }
+ );
+
+
+</script>
+</body>
+</html>

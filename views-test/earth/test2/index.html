@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <meta name='viewport' content="地球,earth,地球仪,threejs,webgl" />
+    <meta name='keywords' content="地球,earth,地球仪,threejs,webgl" />
+    <meta name='description' content="基于 threejs 的拖拽地球,earth,地球仪,threejs,webgl" />
+    <title>地球</title>
+
+    <style>
+        html{overflow: hidden;}
+        body { margin: 0; padding: 0; }
+    </style>
+
+</head>
+<body>
+    <!-- 地国 -->
+    <div id="divEarth"></div> <!-- 容器 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/three.js/r122/three.min.js"></script>
+    <script src="OrbitControls.js"></script>
+
+    <script>
+        var scene, renderer, camera, orbitcontrols;
+    var ThreeJSEarth = function (_domID, _earthOptions) {
+
+        var earthBall;//地球实体
+        var dom, handle;//容器,定时器动画句柄
+
+        /**
+        * 初始化地球，对象创建时自动调用
+        */
+        (function init() {
+            //获取地球容器
+            dom = document.getElementById(_domID);
+            dom.style.width = 'calc(100vw)';
+            dom.style.height = 'calc(100vh)';
+            var _imgSky = _earthOptions.imgSky ? _earthOptions.imgSky : "";
+            dom.style.background = "url(" + _imgSky + ") no-repeat center center";
+            dom.style.backgroundColor = "#00000000";
+
+            // 初始化场景
+            scene = new THREE.Scene();
+            // 初始化相机
+            camera = new THREE.PerspectiveCamera(20, dom.clientWidth / dom.clientHeight, 1, 100000);
+            // 设置相机位置
+            camera.position.set(0, 0, _earthOptions.cameraZ ? _earthOptions.cameraZ : 200);
+            renderer = new THREE.WebGLRenderer({
+                alpha: true,
+                antialias: true
+            });
+            renderer.autoClear = false;
+            // 设置窗口尺寸
+            renderer.setSize(dom.clientWidth, dom.clientHeight);
+
+            // 初始化控制器
+            orbitcontrols = new THREE.OrbitControls(camera, renderer.domElement);
+            // 使动画循环使用时阻尼或自转 意思是否有惯性
+            orbitcontrols.enableDamping = true;
+            // 自动旋转（地球自转）
+            orbitcontrols.autoRotate = true;
+
+            //动态阻尼系数 就是鼠标拖拽旋转灵敏度
+            // orbitcontrols.dampingFactor = 0.2;
+            dom.appendChild(renderer.domElement);
+
+
+            // 设置光线
+            scene.add(new THREE.HemisphereLight('#ffffff', '#ffffff', 1));
+            // 定义地球材质
+            var earthTexture = THREE.ImageUtils.loadTexture(_earthOptions.imgEarth ? _earthOptions.imgEarth : "404.jpg", {}, function () {
+                renderer.render(scene, camera);
+            });
+            // 创建地球
+            earthBall = new THREE.Mesh(new THREE.SphereGeometry(_earthOptions.earthBallSize, 50, 50), new THREE.MeshLambertMaterial({
+                map: earthTexture
+            }));
+            earthBall.layers.set(0);
+
+            scene.add(earthBall);
+            // this.renderEarthByRender();
+            render();
+        })();
+        // 执行函数
+        function render() {
+            if (handle) {
+                cancelAnimationFrame(handle);
+            }
+            renderer.clearDepth();
+            //自转
+            scene.rotation.y += _earthOptions.autorotationSpeed ? _earthOptions.autorotationSpeed : 0;
+            renderer.render(scene, camera);
+            orbitcontrols.update();
+            handle = requestAnimationFrame(render);
+        }
+        // 窗口resize事件
+        window.onresize = function () {
+            // 重新初始化尺寸
+            camera.aspect = dom.clientWidth / dom.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(dom.clientWidth, dom.clientHeight)
+        }
+    }
+
+    //初始化
+    function initThree() {
+        var earthOptions = {
+        //imgEarth: 'assets/images/earth_bg.jpg',//地球贴图
+        imgEarth: './589054345-58abbaf6467c3.jpg',//地球贴图
+        imgSky: './1318258354-58acfc2a92c1c.jpg',//深空背景
+        autorotationSpeed: 0,//自转速度（正数自西向东转，负数为逆向）
+        cameraZ: 200,//摄像头高度,
+        earthBallSize: 30//地球大小
+        };
+        new ThreeJSEarth("divEarth", earthOptions);
+    }
+    initThree();
+</script>
+<script>
+
+    addEventListener('click',Ray);// 监听窗口鼠标单击事件
+    function Ray() {
+        var windowX = event.clientX;//鼠标单击位置横坐标
+        var windowY = event.clientY;//鼠标单击位置纵坐标
+
+        var x = (windowX / window.innerWidth) * 2 - 1;//标准设备横坐标
+        var y = -(windowY / window.innerHeight) * 2 + 1;//标准设备纵坐标
+        var standardVector = new THREE.Vector3(x, y, 0.5);//标准设备坐标
+        //标准设备坐标转世界坐标
+        var worldVector = standardVector.unproject(camera);
+        var ray = worldVector.sub(camera.position).normalize();
+        //创建射线投射器对象
+        var raycaster = new THREE.Raycaster(camera.position, ray);
+        //返回射线选中的对象
+        var intersects = raycaster.intersectObjects( scene.children,true );
+        console.log(intersects);
+        if (intersects.length > 0) {
+            var point=intersects[0].point; //射线在模型表面拾取的点坐标
+            var mesh=intersects[0].object;
+            console.log("point",point,mesh)
+        }
+
+    }
+
+</script>
+<!--<script type="module">//添加坐标图片-->
+<!--import  * as THREE  from "../test/threejs-earth/build/three.module.js";-->
+<!--const param = {-->
+<!--    diam: 50, // 视距远近系数, 越大视距越远近， 越近则图象越大-->
+<!--    spritepic: "localicon.png", // sprite贴图-->
+<!--    radius:5, // 球体半径，只能调整球体大小-->
+<!--};-->
+<!--const coordinates = [-->
+<!--    { longitude:116, latitude:31, countryName:"China", detail:"China position /r/n Phone: 122222222"},-->
+<!--    { longitude:56, latitude:31, countryName:"America", detail:"America position /r/n Phone: 133442222"},-->
+<!--    { longitude:76, latitude:51, countryName:"America", detail:"America position /r/n Phone: 133442222"},-->
+<!--];-->
+<!--const cameraVector3D = new THREE.Vector3(0, 0, 0);-->
+<!--var running=true;-->
+<!--var sphere;-->
+<!--const group = new THREE.Group();-->
+
+<!--window.onload =function() {-->
+<!--    console.log("ss")-->
+<!--    addTextPanel();-->
+<!--    drawSphere();-->
+<!--    addPoints(param.radius);-->
+<!--}-->
+
+<!--function createPanelDetail() {-->
+<!--    const element = document.createElement( 'div' );-->
+<!--    element.style.width = "100px";-->
+<!--    element.style.height = "100px";-->
+<!--    element.style.position = "absolute";-->
+<!--    element.style.left = "200px";-->
+<!--    element.style.top = "300px";-->
+<!--    element.style.zIndex = "2";-->
+<!--    element.style.color = "red";-->
+<!--    element.style.margin = "2px";-->
+<!--    return element;-->
+<!--}-->
+<!--function createTextPanel() {-->
+<!--    const element = document.createElement( 'div' );-->
+<!--    element.style.width = "100px";-->
+<!--    element.style.height = "100px";-->
+<!--    element.style.position = "absolute";-->
+<!--    element.style.left = "200px";-->
+<!--    element.style.top = "100px";-->
+<!--    element.style.zIndex = "1";-->
+<!--    element.style.color = "red";-->
+<!--    element.style.margin = "2px";-->
+<!--    return element;-->
+<!--}-->
+
+
+<!--function addTextPanel() {-->
+<!--    let container = document.getElementById("container");-->
+<!--    let textPanel = createTextPanel();-->
+
+<!--    let panelDetailDiv = createPanelDetail();-->
+
+<!--    for(let i =0; i< coordinates.length; i++) {-->
+<!--        let coord = coordinates[i];-->
+<!--        let spriteid = coord.id;-->
+<!--        let txtDom = document.createElement( 'div' );-->
+<!--        txtDom.style.width = "100%";-->
+<!--        txtDom.style.height = "25px";-->
+<!--        txtDom.style.backgroundColor = "#99aacc";-->
+<!--        txtDom.style.fontSize = "14px";-->
+<!--        txtDom.innerText = coord.countryName;-->
+<!--        txtDom.setAttribute("id", spriteid);-->
+
+<!--        txtDom.onclick = function() {-->
+<!--            //let position = getPositionFromCoordinates(spriteid);-->
+<!--            panelDetailDiv.innerText = coord.detail;-->
+<!--        }-->
+
+<!--        txtDom.onmouseover = function() {-->
+<!--            activeRelativedTxtPanel(txtDom);-->
+<!--        }-->
+<!--        txtDom.onmouseout = function() {-->
+<!--            sleepRelativedTxtPanel(txtDom);-->
+<!--        }-->
+<!--        textPanel.appendChild(txtDom);-->
+<!--    }-->
+
+
+
+<!--}-->
+
+
+<!--function drawSphere() {-->
+<!--    // 贴图-->
+<!--    var texture = new THREE.TextureLoader().load(param.earthpic);-->
+<!--    // 材质-->
+<!--    var material = new THREE.MeshBasicMaterial({-->
+<!--        color: 0xa6d6ff,-->
+<!--        wireframe: false,-->
+<!--        map: texture-->
+<!--    });-->
+<!--    sphere = new THREE.Mesh(new THREE.SphereGeometry(param.radius, 40, 40), material);-->
+<!--    sphere.rotation.y = 10; // TODO-->
+<!--    scene.add(sphere);-->
+<!--}-->
+
+
+<!--function getPosition(longitude, latitude, radius) {-->
+<!--    longitude += 90;//给经度 加 7 个时区的经度-->
+<!--    latitude += 5;-->
+<!--    // 将经度，纬度转换为rad坐标-->
+<!--    var lg = THREE.Math.degToRad(longitude);-->
+<!--    var lt = THREE.Math.degToRad(latitude);-->
+<!--    var temp = radius * Math.cos(lt);-->
+<!--    // 获取x，y，z坐标-->
+<!--    var tmpx = temp * Math.sin(lg);-->
+<!--    var tmpy = radius * Math.sin(lt);-->
+<!--    var tmpz = temp * Math.cos(lg);-->
+<!--    return {-->
+<!--        x: tmpx,-->
+<!--        y: tmpy,-->
+<!--        z: tmpz-->
+<!--    }-->
+
+<!--}-->
+<!--function activeRelativedTxtPanel(panelSprite) {-->
+<!--    running = false;-->
+<!--    panelSprite.style.border = "2px solid red";-->
+<!--}-->
+
+<!--function sleepRelativedTxtPanel(panelSprite) {-->
+<!--    running = true;-->
+<!--    panelSprite.style.border = "none";-->
+<!--}-->
+
+<!--function addPoints(radius) {-->
+<!--    console.log("point",radius)-->
+<!--    const loader = new THREE.TextureLoader();-->
+<!--    const spritetexture = loader.load( param.spritepic );-->
+<!--    // const spritematerial = new THREE.SpriteMaterial( { map: spritetexture, color: 0xa6d6ff, fog: true } );-->
+
+<!--    const spritematerial = new THREE.MeshBasicMaterial({-->
+<!--        wireframe: false,-->
+<!--        map: spritetexture-->
+<!--    });-->
+
+<!--    const amount = coordinates.length;-->
+<!--    let materialtmp;-->
+
+<!--    //const geometry = new THREE.BoxGeometry( 1, 1, 0 );-->
+<!--    const geometry = new THREE.CylinderGeometry(0.5, 0.5, 0.1, 20);-->
+<!--    let coord;-->
+<!--    for ( let a = 0; a < amount; a ++ ) {-->
+<!--        coord = coordinates[a];-->
+<!--        let pos = getPosition(coord.longitude, coord.latitude, radius);-->
+<!--        coord.pos = pos;-->
+<!--        materialtmp = spritematerial.clone();-->
+<!--        materialtmp.map.offset.set( - 0.5, - 0.5 );-->
+<!--        materialtmp.map.repeat.set( 2, 2 );-->
+
+<!--        const sprite = new THREE.Mesh( geometry, spritematerial );-->
+<!--        //const sprite = new THREE.Sprite( materialtmp );-->
+<!--        sprite.position.set( pos.x, pos.y, pos.z );-->
+<!--        sprite.position.normalize();-->
+<!--        sprite.position.multiplyScalar( radius );-->
+<!--        sprite.lookAt( cameraVector3D );-->
+
+<!--        sprite.rotateX(1.5);-->
+
+<!--        console.log(pos.x + "  " + pos.y  + "  " +  pos.z);-->
+<!--        coord.id = sprite.id;-->
+
+<!--        group.add( sprite );-->
+<!--    }-->
+<!--    sphere.add(group);-->
+<!--}-->
+
+<!--</script>-->
+</body>
+</html>

@@ -1,0 +1,389 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>润阳世纪三期-数据中心</title>
+<link rel="stylesheet" href="css/wodry.css">
+<link rel="stylesheet" href="css/index.css">
+<link rel="stylesheet" href="css/public.css">
+<style>
+    .header .header-right{
+        width: 25%;
+        height: 40px;
+    }
+    .header .header-bottom{
+        width: calc(100% - .4rem);
+        height: 18px;
+        background: url(./images/header.png) no-repeat;
+        background-size: calc(100% - .2rem) 100%;
+        padding: 0 .2rem;
+        margin-left: .3rem;
+
+    }
+    .fl {
+        float: left;
+    }
+    .right-btn {
+        padding: 5px 23px;
+        font-size: 15px;
+        line-height: 30px;
+        font-weight: 600;
+        transition: 0.3s ease-in;
+        border-radius: 6px;
+        color: #6AC2D7;
+        border-color: #6AC2D7;
+        margin: 6px;
+        text-decoration:none
+    }
+    .right-btn:hover {
+        color:  #fff;
+        background-color: #fff;
+        border-color: #fff;
+        background: linear-gradient(270deg, transparent, #6AC2D7);
+	    animation: btn-anim3 1s linear infinite;
+	    animation-delay: .02s
+    }
+</style>
+<script src="js/jquery.js"></script>
+<script>
+        $(function () {
+            $('.myscroll').myScroll({
+                speed: 60, //数值越大，速度越慢
+                rowHeight: 38 //li的高度
+            });
+            
+        });
+
+        $(document).ready(function () {
+            var whei = $(window).width()
+            $("html").css({ fontSize: whei / 22 });
+            $(window).resize(function () {
+                var whei = $(window).width();
+                $("html").css({ fontSize: whei / 22 })
+            });
+        });
+    </script>
+</head>
+<body>
+	<div class="main">
+		<div class="header">
+			<div class="header-left fl" id="time"></div>
+			<div class="header-center fl">
+				<div class="header-title">润阳世纪三期-数据中心</div>
+				<div class="header-img"></div>
+			</div>
+			<div class="header-right fl">
+        <div style="    color: white;display: flex;line-height: 60px;justify-content: space-around;">
+            <a  class="right-btn" href="https://www.ramo.top:8080/fws/images/babylonjs-demo.html"  target='_BLANK'>切换主题</a>
+            <a  class="right-btn" href="https://www.ramo.top:8080/fws/images/earth/test4/view.html"  target='_BLANK'>生产线</a>
+            <a  class="right-btn" href="https://www.ramo.top:8080/fws/images/babylonjs-demo-factory.html"  target='_BLANK'>返回上层</a>
+        </div>
+    </div>
+		<div class="header-bottom fl"></div>
+		</div>
+		<div class="center">
+			<div class="center-left fl">
+				<div class="left-top rightTop border">
+					<!--<h1 id="ceshi">数据可视化</h1>-->
+					<div class="title">基本信息</div>
+					<div class="top-list">
+						<ul>
+							<li>总交易额：<span id="info1" style="color: #6AC2D7;">64250</span>万
+							</li>
+							<li>总交易量：<span id="info2" style="color: #6AC2D7;">14250</span>万件
+							</li>
+							<li>总产量：<span id="info9" style="color: #6AC2D7;">15250</span>万件
+							</li>
+							<li>总发电量：<span id="info10" style="color: #6AC2D7;">64250</span>MW
+							</li>
+							<li>已成交额：<span id="info3" style="color: #6AC2D7;">54250</span>万
+							</li>
+							<li>已成交量：<span id="info4" style="color: #6AC2D7;">13545</span>万件
+							</li>
+							<li>今日交易额：<span id="info5" style="color: #6AC2D7;">1254</span>万
+							</li>
+							<li>今日成交量：<span id="info6" style="color: #6AC2D7;">854</span>万件
+							</li>
+							<li>今日已发货：<span id="info7" style="color: #6AC2D7;">764</span>万件
+							</li>
+							<li>今日待发货量：<span id="info8" style="color: #6AC2D7;">90</span>万件
+							</li>
+							<li>今日产量：<span id="info11" style="color: #6AC2D7;">10</span>万件
+							</li>
+							<li>今日发电量：<span id="info12" style="color: #6AC2D7;">90</span>MW
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="left-cen rightTop border">
+					<div class="title">全球前五销售量排名</div>
+					<ul class="company" id="ceshi">
+						<li class="wodryRX0" style="display:flex">
+						<div style=" width:190px;">
+							NO.1&nbsp;&nbsp;<img src="images/om.jpg" width="20" height="10">&nbsp;&nbsp;欧盟,累计<span id="company1" style="color: #6AC2D7;">4890</span>万件</div>
+						<div><img id="img1" src="images/green.jpg" width="110" height="10"></div>
+						</li>
+						<br/>
+						<li class="wodryRX1" style="display:flex">
+						<div style=" width:190px;">NO.2&nbsp;&nbsp;<img src="images/rb.jpeg" width="20" height="10">&nbsp;&nbsp;日本,累计<span id="company2" style="color: #6AC2D7;">3589</span>万件
+						</div>
+						<div>
+						<img id="img2" src="images/green.jpg" width="100" height="10">
+						</div>
+						</li>
+						<br/>
+						<li class="wodryRX2" style="display:flex">
+						<div style=" width:190px;">
+							NO.3&nbsp;&nbsp;<img src="images/ydl.jpg" width="20" height="10">&nbsp;&nbsp;意大利，累计<span id="company3" style="color: #6AC2D7;">3190</span>万件</div>
+						<div>
+							<img id="img3" src="images/green.jpg" width="90" height="10">
+						</div>
+						</li>
+						<br/>
+						<li class="wodryRX3" style="display:flex">
+						<div style=" width:190px;">
+							NO.4&nbsp;&nbsp;<img src="images/yg.jpg" width="20" height="10">&nbsp;&nbsp;英国，累计<span id="company4" style="color: #6AC2D7;">2908</span>万件
+						</div>
+						<div>
+						<img id="img4" src="images/green.jpg" width="80" height="10">
+						</div>
+						</li>
+						<br/>
+						<li class="wodryRX4" style="display:flex">
+						<div style=" width:190px;">
+							NO.5&nbsp;&nbsp;<img src="images/els.jpeg" width="20" height="10">&nbsp;&nbsp;俄罗斯，累计<span id="company5" style="color: #6AC2D7;">1089</span>万件
+						</div>
+						<div>
+						<img id="img5" src="images/green.jpg" width="70" height="10">
+						</div>
+						</li>
+					</ul>
+				</div>
+				<div class="left-bottom rightTop border">
+					<div class="title">今日全球前十国家销售额占比</div>
+					<div class="bottom-b">
+						<div id="chart3" class="allnav"></div>
+					</div>
+				</div>
+			</div>
+			<div class="center-cen fl">
+				<div class="cen-top rightTop border">
+					<iframe src="../views-test/main2.html" width="100%" height= "100%" name="topFrame" scrolling="No"  noresize="noresize" frameborder="0" id="topFrame"></iframe>
+				</div>
+				<div class="cen-bottom rightTop border">
+					<div class="title">月统计</div>
+					<div class="bottom-b">
+						<div id="chart4" class="allnav"></div>
+					</div>
+				</div>
+			</div>
+			<div class="center-right fr">
+				<div class="right-top rightTop border">
+					<div class="title">全球累计销售额排行</div>
+
+					<div class="echart wenzi">
+						<div class="gun">
+							<span>排名</span> <span>地区名称</span> <span>销量</span>
+						</div>
+						<div id="FontScroll" class="myscroll">
+							<ul>
+								<li>
+									<div class="fontInner clearfix">
+										<span> <b>1</b>
+										</span> <span>日本</span> <span>4562万</span>
+									</div>
+								</li>
+								<li>
+									<div class="fontInner clearfix">
+										<span> <b>2</b>
+										</span> <span>欧盟</span> <span>4125万</span>
+									</div>
+								</li>
+								<li>
+									<div class="fontInner clearfix">
+										<span> <b>3</b>
+										</span> <span>非洲</span> <span>4100万</span>
+									</div>
+								</li>
+								<li>
+									<div class="fontInner clearfix">
+										<span> <b>4</b>
+										</span> <span>菲律宾</span> <span>3989万</span>
+									</div>
+								</li>
+								<li>
+									<div class="fontInner clearfix">
+										<span> <b>5</b>
+										</span> <span>马来西亚</span> <span>3956万</span>
+									</div>
+								</li>
+								<li>
+									<div class="fontInner clearfix">
+										<span> <b>6</b>
+										</span> <span>新加坡</span> <span>3823万</span>
+									</div>
+								</li>
+								<li>
+									<div class="fontInner clearfix">
+										<span> <b>7</b>
+										</span> <span>阿根廷</span> <span>3723万</span>
+									</div>
+								</li>
+								<li>
+									<div class="fontInner clearfix">
+										<span> <b>8</b>
+										</span> <span>巴西</span> <span>3500万</span>
+									</div>
+								</li>
+								<li>
+									<div class="fontInner clearfix">
+										<span> <b>9</b>
+										</span> <span>英国</span> <span>3412万</span>
+									</div>
+								</li>
+								<li>
+									<div class="fontInner clearfix">
+										<span> <b>10</b>
+										</span> <span>意大利</span> <span>3312万</span>
+									</div>
+								</li>
+								<li>
+									<div class="fontInner clearfix">
+										<span> <b>11</b>
+										</span> <span>塞尔维亚</span> <span>2856万</span>
+									</div>
+								</li>
+								<li>
+									<div class="fontInner clearfix">
+										<span> <b>12</b>
+										</span> <span>法国</span> <span>2631万</span>
+									</div>
+								</li>
+
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="right-cen border">
+					<div class="title">全球前十国家累计销售额占比</div>
+					<div class="right-cen-cent">
+						<div id="chart2" class="allnav"></div>
+					</div>
+				</div>
+				<div class="right-bottom rightTop border">
+					<div class="title">全球前五国家城市数排行</div>
+					<div class="chat">
+						<div id="chart5" class="allnav"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/echarts.min.js"></script>
+	<script src="js/wodry.min.js"></script>
+	<script src="js/fontscroll.js"></script>
+	<script src="js/echarts.js"></script>
+	<script src="js/china.js"></script>
+	<script>
+    //顶部时间
+    function getTime(){
+        var myDate = new Date();
+        var myYear = myDate.getFullYear(); //获取完整的年份(4位,1970-????)
+        var myMonth = myDate.getMonth()+1; //获取当前月份(0-11,0代表1月)
+        var myToday = myDate.getDate(); //获取当前日(1-31)
+        var myDay = myDate.getDay(); //获取当前星期X(0-6,0代表星期天)
+        var myHour = myDate.getHours(); //获取当前小时数(0-23)
+        var myMinute = myDate.getMinutes(); //获取当前分钟数(0-59)
+        var mySecond = myDate.getSeconds(); //获取当前秒数(0-59)
+        var week = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+        var nowTime;
+
+        nowTime = myYear+'-'+fillZero(myMonth)+'-'+fillZero(myToday)+'&nbsp;&nbsp;'+fillZero(myHour)+':'+fillZero(myMinute)+':'+fillZero(mySecond)+'&nbsp;&nbsp;'+week[myDay]+'&nbsp;&nbsp;';
+        //console.log(nowTime);
+        $('#time').html(nowTime);
+    };
+    function fillZero(str){
+        var realNum;
+        if(str<10){
+            realNum	= '0'+str;
+        }else{
+            realNum	= str;
+        }
+        return realNum;
+    }
+    setInterval(getTime,1000);
+    
+    
+    var info1 = 64250;
+    var info2 = 14250;
+    var info3 = 54250;
+    var info4 = 13545;
+    var info5 = 1254;
+    var info6 = 854;
+    var info7 = 764;
+    var info8 = 90;
+    var info9 = 15250;
+    var info10 = 64250;
+    var info11 = 10;
+    var info12 = 90;
+    var company1 = 4890;
+    var company2 = 3589;
+    var company3 = 3190;
+    var company4 = 2908;
+    var company5 = 1089;
+    
+    function showInfo(){
+    	 info1 = info1 + Math.round(Math.random()*10);
+    	 info2 = info2 + Math.round(Math.random()*10);
+    	 info3 = info3 + Math.round(Math.random()*10);
+    	 info4 = info4 + Math.round(Math.random()*10);
+    	 info5 = info5 + Math.round(Math.random()*10);
+    	 info6 = info6 + Math.round(Math.random()*10);
+    	 info7 = info7 + Math.round(Math.random()*10);
+    	 info9 = info9 + Math.round(Math.random()*10);
+    	 info10 = info10 + Math.round(Math.random()*10);
+    	 info11 = info11 + Math.round(Math.random()*10);
+    	 info12 = info12 + Math.round(Math.random()*10);
+    	 
+    	 $('#info1').html(info1);
+    	 $('#info2').html(info2);
+    	 $('#info3').html(info3);
+    	 $('#info4').html(info4);
+    	 $('#info5').html(info5);
+    	 $('#info6').html(info6);
+    	 $('#info7').html(info7);
+    	 $('#info8').html(info8 + Math.round(Math.random()*10));
+    	 $('#info9').html(info9);
+    	 $('#info10').html(info10);
+    	 $('#info11').html(info11);
+    	 $('#info12').html(info12);
+    }
+    
+    setInterval(showInfo,1000);
+    
+    function showImgInfo(){
+   	 company1 = company1 + Math.round(Math.random()*10);
+   	 company2 = company2 + Math.round(Math.random()*10);
+   	 company3 = company3 + Math.round(Math.random()*10);
+   	 company4 = company4 + Math.round(Math.random()*10);
+   	 company5 = company5 + Math.round(Math.random()*10);
+   	 
+   	 $('#company1').html(company1);
+   	 $('#company2').html(company2);
+   	 $('#company3').html(company3);
+   	 $('#company4').html(company4);
+   	 $('#company5').html(company5);
+   	 
+   	 $("#img1").width(110 + Math.round(Math.random()*10));
+   	 $("#img2").width(100 + Math.round(Math.random()*10));
+   	 $("#img3").width(88 + Math.round(Math.random()*10));
+   	 $("#img4").width(78 + Math.round(Math.random()*10));
+   	 $("#img5").width(66 + Math.round(Math.random()*10));
+   }
+    
+   setInterval(showImgInfo,1000);
+    
+</script>
+</body>
+</html>

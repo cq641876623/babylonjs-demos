@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="https://arrive-hydrated.oss-cn-beijing.aliyuncs.com/img/favicon.ico" rel="shortcut icon" />
+
+    <link rel="stylesheet" type="text/css" href="https://arrive-hydrated.oss-cn-beijing.aliyuncs.com/css/app-zh.css" defer="defer" />
+    <script type="text/javascript" src="https://arrive-hydrated.oss-cn-beijing.aliyuncs.com/js/vendor.js" defer="defer"></script>
+    <link rel="stylesheet" href="../static/css/index.css">
+    <link rel="stylesheet" href="../static/css/scroll.css">
+    <script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="../static/js/scrollNumber.js"/>
+    <script type="text/javascript" src="../static/js/countNumber.js"/>
+
+    <!--<script src="../static/js/jquery-3.2.1.js" type="text/javascript"/>-->
+    <script src="../static/js/echarts-4.2.1.min.js"></script>
+    <script src="../static/js/echarts.min.js"></script>
+    <script type="text/javascript" src="../static/js/china.js"></script>
+    <script type="text/javascript" src="../static/js/miangoogle.js"></script>
+    <!--<script type="text/javascript" src="../static/js/jquery.min.js"></script>-->
+
+    <link rel="stylesheet" type="text/css"  href="http://unpkg.com/element-ui@2.4.1/lib/theme-chalk/index.css"/>
+    <!--弹窗-->
+    <link href="../static/css/displaystyle.css" rel="stylesheet">
+    <script src="../static/js/shCore.js"></script>
+    <script src="../static/js/shBrushJScript.js"></script>
+    <link href="../static/css/shCoreRDark.css" rel="stylesheet">
+    <script src="../static/js/NZ-Window.min.js"></script>
+    <link href="../static/css/NZ-Window.min.css" rel="stylesheet">
+    <script src="../static/js/NZ-Drag.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../static/css/menu1.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/menu2.css"/>
+
+    <!--hover按钮-->
+    <link rel="stylesheet" type="text/css" href="../static/css/default.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/component.css"/>
+
+    <style>
+        .nav-mini{
+            width: 22%;
+            height: 100%;
+            float: left;
+            transition: all .3s;
+            margin-left: -40%;
+        }
+        .nav-mini1{
+            width: 22%;
+            height: 100%;
+            float: left;
+            transition: all .3s;
+            margin-left: 100%;
+        }
+
+
+    </style>
+    <title>SMT 平台</title>
+
+
+    <link rel="stylesheet" type="text/css" href="https://arrive-hydrated.oss-cn-beijing.aliyuncs.com/css/home/index-zh.css" defer="defer" />
+
+    <!--[if lte IE 10]>
+    <script type="text/javascript">
+        window.location = 'https://arrivehydrated.cremedelamer.com/not-supported'
+    </script>
+    <![endif]-->
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+    uniform vec3 color;
+    varying vec3 vPosition;
+    varying vec4 vColor;
+
+    void main() {
+         gl_PointSize =5.0;
+        vPosition = position;
+        vColor = vec4(color, 1.0);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+    }
+</script>
+
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+    uniform vec3 targetPos; // 目标位置
+    uniform float vLength;  // 距离
+    uniform float time;
+    varying vec3 vPosition;
+    varying vec4 vColor;
+    void main() {
+        float dist = distance(vPosition, targetPos);
+
+        vec4 color = vec4(vColor);
+        float p = dist/vLength * 2.0 + time * 1.0;
+
+
+        if (p < 3.1415926/2.0){
+            p = 0.0;
+        }
+        if (p > 3.1415926*2.0){
+            p = 0.0;
+        }
+
+        float a = cos(p+ 3.1415926);
+        color.a = a;
+
+        gl_FragColor = color;
+    }
+</script>
+    <script src="../static/js/three.103.min.js"></script>
+    <script type="text/javascript">
+        window.cities = [{"id":10,"name":"\u5965\u514b\u5170","country":"\u65b0\u897f\u5170","lat":"-36.8484597","long":"174.7633315","tempLow":16.8,"tempHigh":22,"avgTemp":22,"weather":"rain","weatherDescription":"\u5c0f\u96e8","humidity":51},{"id":14,"name":"\u66fc\u8c37","country":"\u6cf0\u56fd","lat":"13.7563309","long":"100.5017651","tempLow":27.8,"tempHigh":34.5,"avgTemp":34.5,"weather":"clear","weatherDescription":"\u6674\u6717","humidity":42},{"id":15,"name":"\u5df4\u585e\u7f57\u90a3","country":"\u897f\u73ed\u7259","lat":"41.3850639","long":"2.1734035","tempLow":11.7,"tempHigh":13.8,"avgTemp":13.8,"weather":"rain","weatherDescription":"\u5c0f\u96e8","humidity":71},{"id":17,"name":"\u5317\u4eac","country":"\u4e2d\u56fd","lat":"39.90419989999999","long":"116.4073963","tempLow":3.1,"tempHigh":12.9,"avgTemp":9.6,"weather":"cloudy","weatherDescription":"\u758f\u4e91","humidity":62},{"id":28,"name":"\u5f00\u7f57","country":"\u57c3\u53ca","lat":"30.0444196","long":"31.2357116","tempLow":11.8,"tempHigh":22.2,"avgTemp":18.5,"weather":"clear","weatherDescription":"\u6674\u6717","humidity":36},{"id":31,"name":"\u5f00\u666e\u6566","country":"\u5357\u975e","lat":"-33.9248685","long":"18.4240553","tempLow":18.4,"tempHigh":20.7,"avgTemp":19.4,"weather":"cloudy","weatherDescription":"\u758f\u4e91","humidity":70},{"id":74,"name":"\u9999\u6e2f","country":"\u9999\u6e2f","lat":"22.396428","long":"114.109497","tempLow":16.3,"tempHigh":19.4,"avgTemp":16.8,"weather":"cloudy","weatherDescription":"\u9634\u5929","humidity":84},{"id":77,"name":"\u4f0a\u65af\u5766\u5e03\u5c14","country":"\u571f\u8033\u5176","lat":"41.0082376","long":"28.9783589","tempLow":7.2,"tempHigh":12.9,"avgTemp":11,"weather":"clear","weatherDescription":"\u6674\u6717","humidity":44},{"id":90,"name":"\u4f26\u6566","country":"\u82f1\u56fd","lat":"51.5073509","long":"-0.1277583","tempLow":7.4,"tempHigh":12.9,"avgTemp":11.3,"weather":"rain","weatherDescription":"\u5c0f\u96e8","humidity":72},{"id":92,"name":"\u6d1b\u6749\u77f6","country":"\u7f8e\u56fd","lat":"34.0522342","long":"-118.2436849","tempLow":12,"tempHigh":19.5,"avgTemp":18.9,"weather":"rain","weatherDescription":"\u5c0f\u96e8","humidity":36},{"id":101,"name":"\u58a8\u5c14\u672c","country":"\u6fb3\u5927\u5229\u4e9a","lat":"-37.8136276","long":"144.9630576","tempLow":15.6,"tempHigh":24.2,"avgTemp":24,"weather":"clear","weatherDescription":"\u6674\u6717","humidity":45},{"id":120,"name":"\u5df4\u9ece","country":"\u6cd5\u56fd","lat":"48.856614","long":"2.3522219","tempLow":8.1,"tempHigh":14.8,"avgTemp":14,"weather":"rain","weatherDescription":"\u5c0f\u96e8","humidity":50},{"id":121,"name":"\u73c0\u65af","country":"\u6fb3\u5927\u5229\u4e9a","lat":"-31.9505269","long":"115.8604572","tempLow":21.6,"tempHigh":25.7,"avgTemp":25.6,"weather":"rain","weatherDescription":"\u5c0f\u96e8","humidity":60},{"id":128,"name":"\u7687\u540e\u9547","country":"\u65b0\u897f\u5170","lat":"-45.0311622","long":"168.6626435","tempLow":8.6,"tempHigh":16.1,"avgTemp":14.7,"weather":"rain","weatherDescription":"\u5c0f\u96e8","humidity":47},{"id":129,"name":"\u91cc\u7ea6\u70ed\u5185\u5362","country":"\u5df4\u897f","lat":"-22.9068467","long":"-43.1728965","tempLow":25.1,"tempHigh":30.8,"avgTemp":30.8,"weather":"rain","weatherDescription":"\u5c0f\u96e8","humidity":50},{"id":131,"name":"\u7f57\u9a6c","country":"\u610f\u5927\u5229","lat":"41.9027835","long":"12.4963655","tempLow":6.2,"tempHigh":15.7,"avgTemp":15.7,"weather":"clear","weatherDescription":"\u6674\u6717","humidity":40},{"id":141,"name":"\u4e0a\u6d77","country":"\u4e2d\u56fd","lat":"31.2303904","long":"121.4737021","tempLow":9.5,"tempHigh":14.9,"avgTemp":13,"weather":"rain","weatherDescription":"\u4e2d\u96e8","humidity":65},{"id":144,"name":"\u65b0\u52a0\u5761","country":"\u65b0\u52a0\u5761","lat":"1.352083","long":"103.819836","tempLow":25.4,"tempHigh":29.6,"avgTemp":29.6,"weather":"rain","weatherDescription":"\u5c0f\u96e8","humidity":64},{"id":152,"name":"\u4e1c\u4eac","country":"\u65e5\u672c","lat":"35.6894875","long":"139.6917064","tempLow":7.9,"tempHigh":12.9,"avgTemp":11.6,"weather":"rain","weatherDescription":"\u5c0f\u96e8","humidity":60},{"id":153,"name":"\u591a\u4f26\u591a","country":"\u52a0\u62ff\u5927","lat":"43.653226","long":"-79.3831843","tempLow":-3.6,"tempHigh":0.4,"avgTemp":-1.2,"weather":"cloudy","weatherDescription":"\u9634\u5929","humidity":79},{"id":168,"name":"\u82cf\u9ece\u4e16","country":"\u745e\u58eb","lat":"47.3768866","long":"8.541694","tempLow":4.2,"tempHigh":13.4,"avgTemp":13.4,"weather":"rain","weatherDescription":"\u4e2d\u96e8","humidity":48}];
+    </script>
+    <script >
+        var isMobile = {
+            Android: function () {
+                return navigator.userAgent.match(/Android/i) ? true : false;
+            },
+            BlackBerry: function () {
+                return navigator.userAgent.match(/BlackBerry/i) ? true : false;
+            },
+            iOS: function () {
+                return navigator.userAgent.match(/iPhone|iPad|iPod/i) ? true : false;
+            },
+            Windows: function () {
+                return navigator.userAgent.match(/IEMobile/i) ? true : false;
+            },
+            any: function () {
+                return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
+            }
+        };
+
+        var vertexShader = document.getElementById('vertex-shader').innerHTML;
+        var fragmentShader = document.getElementById('fragment-shader').innerHTML;
+
+
+
+
+
+        function aaa() {
+
+
+            var latlongToCarteson = function( t, e,n) {
+                var r = (90 - t) / 180 * Math.PI,
+                    i = (180 - e + 180) / 180 * Math.PI;
+                return {
+                    phi: r,
+                    theta: i,
+                    x: Math.sin(r) * Math.cos(i) * n,
+                    y: Math.cos(r) * n,
+                    z: Math.sin(r) * Math.sin(i) * n
+                }
+            }
+
+
+
+
+
+            var p = isMobile.any()? 320 : 200;
+            let v= p + 15;
+            let g1 = latlongToCarteson(cities[1].lat, cities[1]["long"], v);
+            let g2 = latlongToCarteson(cities[9].lat, cities[9]["long"], v);
+
+
+            let start=new THREE.Vector3(g1.x, g1.y, g1.z );
+            let end= new THREE.Vector3(g2.x, g2.y, g2.z );
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+    </script>
+    <script>
+        function randomVec3Color(){
+            return new THREE.Vector3(
+                Math.random()*0.6 + 0.4,
+                Math.random()*0.6 + 0.4,
+                Math.random()*0.6 + 0.4
+            )
+        }
+        let p = isMobile.any()? 320 : 200;
+        let v= p + 15;
+
+        class FlyLines{
+            params = {
+                pointsLength: 20, // 点数
+                globeRadius: 0 // 地球半径
+            }
+            PI2 = Math.PI * 2; // 弧度的取值为0-2π
+            timer = -this.PI2;
+            groupLines = new THREE.Group();
+            constructor(r) {
+                this.params.globeRadius=r
+            }
+
+            addLines(v0, v3,color) {
+                var angle = v0.angleTo(v3);
+
+                var vtop = v0.clone().add(v3);
+                vtop = vtop.normalize().multiplyScalar(this.params.globeRadius);
+
+                var n;
+
+                if (angle <= 1) {
+                    n = this.params.globeRadius / 5 * angle;
+                } else if (angle > 1 && angle < 2) {
+                    n = this.params.globeRadius / 5 * Math.pow(angle, 2);
+                } else {
+                    n = this.params.globeRadius / 5 * Math.pow(angle, 1.5);
+                }
+
+                var v1 = v0.clone().add(vtop).normalize().multiplyScalar(this.params.globeRadius + n);
+                var v2 = v3.clone().add(vtop).normalize().multiplyScalar(this.params.globeRadius + n);
+
+                // addLineHelper(globeMesh.position, v1);
+                // addLineHelper(globeMesh.position, v2);
+                // addLineHelper(globeMesh.position, vtop)
+
+                // 三维三次贝塞尔曲线（v0起点，v1第一个控制点，v2第二个控制点，v3终点）
+                var curve = new THREE.CubicBezierCurve3(v0, v1, v2, v3);
+                var points = curve.getPoints(4000);
+                var vertices = [],
+                    colors = [];
+
+                points.forEach(function(item, index) {
+                    vertices.push(item.x, item.y, item.z);
+                    colors.push(index / points.length, index / points.length, index / points.length);
+                });
+                var geometry = new THREE.BufferGeometry();
+
+                geometry.attributes.position = new THREE.Float32BufferAttribute(vertices, 3)
+                var material = this._createLineMaterial(v0, v3,color);
+                var lineMesh = new THREE.Points(geometry, material);
+                this.groupLines.add(lineMesh)
+                return {
+                    curve: curve,
+                    lineMesh: lineMesh
+                };
+            }
+
+            _createLineMaterial(myPos, targetPos,color) {
+                var uniforms = {
+                    targetPos: {
+                        value: targetPos
+                    },
+                    vLength: {
+                        value: myPos.distanceTo(targetPos)
+                    },
+                    time: {
+                        value: this.timer
+                    },
+                    color: {
+                        type: 'v3', value:color
+                    }
+                };
+
+                var material = new THREE.ShaderMaterial({
+                    uniforms: uniforms,
+                    vertexShader: vertexShader,
+                    fragmentShader: fragmentShader,
+                    transparent: true,
+                });
+
+                return material;
+            }
+
+            animation(){
+                this.timer += 0.02;
+                if (this.timer > Math.PI * 1.5) {
+                    this.timer = -Math.PI * 1.5;
+                }
+                let that=this;
+                this.groupLines.children.forEach(function(item) {
+                    item.material.uniforms.time.value = that.timer;
+                });
+            }
+
+            setVisible(boolean){
+                this.groupLines.visible=boolean;
+            }
+
+
+
+            clearAll(scene){
+                scene.remove(this.groupLines)
+
+            }
+
+
+
+        }
+        var  flyLines=new FlyLines(v);
+        var latlongToCarteson = function( t, e,n) {
+            var r = (90 - t) / 180 * Math.PI,
+                i = (180 - e + 180) / 180 * Math.PI;
+            return {
+                phi: r,
+                theta: i,
+                x: Math.sin(r) * Math.cos(i) * n,
+                y: Math.cos(r) * n,
+                z: Math.sin(r) * Math.sin(i) * n
+            }
+        }
+        /*画板*/
+
+
+        function makeTextSprite( message, parameters )
+        {
+            if ( parameters === undefined ) parameters = {};
+
+            var fontface = parameters.hasOwnProperty("fontface") ?
+                parameters["fontface"] : "Arial";
+
+            var fontsize = parameters.hasOwnProperty("fontsize") ?
+                parameters["fontsize"] : 18;
+
+            var borderThickness = parameters.hasOwnProperty("borderThickness") ?
+                parameters["borderThickness"] : 4;
+
+            var borderColor = parameters.hasOwnProperty("borderColor") ?
+                parameters["borderColor"] : { r:0, g:0, b:0, a:1.0 };
+
+            var backgroundColor = parameters.hasOwnProperty("backgroundColor") ?
+                parameters["backgroundColor"] : { r:255, g:255, b:255, a:1.0 };
+
+
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            context.font = "Bold " + fontsize + "px " + fontface;
+
+            // get size data (height depends only on font size)
+            var metrics = context.measureText( message );
+            var textWidth = metrics.width;
+
+            // background color
+            context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + ","
+                + backgroundColor.b + "," + backgroundColor.a + ")";
+            // border color
+            context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + ","
+                + borderColor.b + "," + borderColor.a + ")";
+
+            context.lineWidth = borderThickness;
+            roundRect(context, borderThickness/2, borderThickness/2, textWidth + borderThickness, fontsize * 1.4 + borderThickness, 6);
+            // 1.4 is extra height factor for text below baseline: g,j,p,q.
+
+            // text color
+            context.fillStyle = "rgba(0, 0, 0, 1.0)";
+
+            context.fillText( message, borderThickness, fontsize + borderThickness);
+
+            // canvas contents will be used for a texture
+            var texture = new THREE.Texture(canvas)
+            texture.needsUpdate = true;
+
+            var spriteMaterial = new THREE.SpriteMaterial(
+                { map: texture, useScreenCoordinates: false, } );
+            var sprite = new THREE.Sprite( spriteMaterial );
+            sprite.scale.set(180,100,1.0);
+            return sprite;
+        }
+
+        // function for drawing rounded rectangles
+        function roundRect(ctx, x, y, w, h, r)
+        {
+            ctx.beginPath();
+            ctx.moveTo(x+r, y);
+            ctx.lineTo(x+w-r, y);
+            ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+            ctx.lineTo(x+w, y+h-r);
+            ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+            ctx.lineTo(x+r, y+h);
+            ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+            ctx.lineTo(x, y+r);
+            ctx.quadraticCurveTo(x, y, x+r, y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        function tag(worldVector,div) {
+            /**
+             * 立方体世界坐标转屏幕坐标
+             */
+                //获取网格模型boxMesh的世界坐标
+            var worldVector =worldVector;
+            var standardVector = worldVector.project(contextN.m_camera);//世界坐标转标准设备坐标
+            var a = document.querySelector("body > div.container_all.desktop > div.globe-area > div.globe-container > canvas").width/ 2;
+            var b = document.querySelector("body > div.container_all.desktop > div.globe-area > div.globe-container > canvas").height / 2;
+            var x = Math.round(standardVector.x * a + a);//标准设备坐标转屏幕坐标
+            var y = Math.round(-standardVector.y * b + b);//标准设备坐标转屏幕坐标
+            /**
+             * 更新立方体元素位置
+             */
+            div.style.left = x + 'px';
+            div.style.top = y + 'px';
+        }
+
+
+
+
+    </script>
+
+    <!--    <script type="text/javascript" src="https://arrive-hydrated.oss-cn-beijing.aliyuncs.com/js/home/index.js?v=0" defer="defer"></script>-->
+    <script type="text/javascript" src="./earth/test/奢润旅行每一刻_files/index1.js?v=0" defer="defer"></script>
+    <!--<script type="text/javascript"  src="line/test3/SMT 平台_files/index.js?v=0" defer="defer"></script>-->
+
+
+    <script type="text/javascript">
+        var CONFIG = {
+            baseURL		: "https://arrivehydrated.cremedelamer.com",
+            csrf		: "YFJbtmhU1fOMMRV4rr2y6Y2S3nTz2WMEwTLnILKW",
+            cdnURL		: "https://arrive-hydrated.oss-cn-beijing.aliyuncs.com/",
+            lang		: "zh"
+        };
+    </script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-113377556-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+
+
+
+        gtag('config', 'UA-113377556-1');
+    </script>
+    <style>
+        .main_middle {
+            height: 7.1%;
+            width: 100%;
+        }
+        .main_middle_list {
+            position: relative;
+            float: left;
+            width: 18.5%;
+            height: 100%;
+            background: rgba(11,76,151,0.10);
+            margin-left: 1.875%;
+            box-shadow: 1px 2px 10px 1px rgba(14,252,255,0.53), inset 5px 4px 100px 1px rgba(14,252,255,0.34);
+        }
+    </style>
+
+</head>
+<body class="lang-zh"  >
+<!-- CONTAINER ALL -->
+<div class="container_all desktop">
+
+    <!-- PRELOADER -->
+    <div class="page-preloader">
+
+        <div class="inner">
+
+            <div class="valign">
+                <!-- PROGRESS -->
+                <div class="preloader-progress">
+
+                    <img class="plane" src="https://arrive-hydrated.oss-cn-beijing.aliyuncs.com/img/common/preloader_plane@2x.png" />
+                    <div class="bar">
+                        <div class="bar-inner"></div>
+                    </div>
+
+                    <div class="progress-txt">0<sup>%</sup></div>
+                </div>
+                <!-- END PROGRESS -->
+
+                <div class="label">
+                    正在加载SMT 平台地图...							</div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="globe-area" data-bg="https://arrive-hydrated.oss-cn-beijing.aliyuncs.com/img/home/galaxy.jpg" style="z-index: 10;">
+        <div id="container" style="position: absolute;z-index: 10;" data-bg="https://arrive-hydrated.oss-cn-beijing.aliyuncs.com/img/home/galaxy.jpg"> </div>
+        <div class="globe-container"></div>
+
+        <div class="intro">
+
+
+
+
+        </div>
+
+
+
+
+        <div class="transit-out">
+            <div class="top"></div>
+            <div class="bottom"></div>
+        </div>
+
+    </div>
+</div>
+<!--菜单-->
+<div class="menu-wrap" style="z-index: 11;">
+    <input type="checkbox" class="toggler" title="菜单" id="caidan" >
+    <div class="hamburger"><div></div></div>
+    <div class="menu" style="background:  #33333380;">
+        <div id="order" style="width: 48%;height: 10%;background: linear-gradient(15deg, rgb(2, 168, 181) 0%, rgb(49, 206, 119) 100%);margin-top: -132%;margin-left: -1%;border-radius: 18px;z-index: 2;border: none;">
+            <img src="../static/images/orders.png" style="width: 12%;margin-left: -74%;margin-top: -12%;">
+            <label style="position: absolute;margin-left: -72%;margin-top: 17%;font-size: 1px;">订单量</label>
+            <div class="title-nav" id="wuran" _echarts_instance_="ec_1617331242090"
+                 style="width: 160px;height: 223px;-webkit-tap-highlight-color: transparent;user-select: none;position: absolute;margin-left:19%;margin-top: -6%;"><div style="position: relative;overflow: hidden;width: 178px;height: 223px;padding: 0px;margin: 0px;border-width: 0px;cursor: default;"><canvas data-zr-dom-id="zr_0" width="237" height="278" style="position: absolute; left: 0px; top: 0px; width: 190px; height: 223px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas><canvas data-zr-dom-id="zr_1" width="237" height="278" style="position: absolute; left: 0px; top: 0px; width: 190px; height: 223px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas></div><div style="position: absolute; display: none; border-style: solid; white-space: nowrap; z-index: 9999999; transition: left 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s, top 0.4s cubic-bezier(0.23, 1, 0.32, 1) 0s; background-color: rgba(50, 50, 50, 0.7); border-width: 0px; border-color: rgb(51, 51, 51); border-radius: 4px; color: rgb(255, 255, 255); font: 14px / 21px &quot;Microsoft YaHei&quot;; padding: 5px; left: 41px; top: 141px; pointer-events: none;"> : 10714</div></div>
+        </div>
+        <div id="jiaofu" style="width: 48%;height: 10%;background: linear-gradient(15deg, #ff930b 0%, #f56c6c 100%);margin-top: -132%;margin-left: 2%;border-radius: 18px;z-index: 2;">
+            <img src="../static/images/jaofu.png" style="width: 12%;margin-left: -74%;margin-top: -12%;"/>
+            <label style="position: absolute;margin-left: -72%;margin-top: 17%;font-size: 1px;">交付量</label>
+            <div class="title-nav" id="wuran1" _echarts_instance_="ec_1614584215150"
+                 style="width: 160px;height: 223px;-webkit-tap-highlight-color: transparent;user-select: none;position: absolute;margin-left:19%;margin-top: -6%;">
+            </div>
+        </div>
+
+        <div id="orderlist" style="position: absolute;width: 98%;margin-top: 30%;margin-left: 1%;">
+            <div onmouseover="oc1()" onmouseleave="oc1v()" style="position: absolute;margin-top: -152%;background: white;border-radius: 10px;height: 13%;">
+                <img src="../static/images/map/欧洲.png" style="width: 12%;margin-left: -78%;margin-top: 4%;">
+                <label style="position: absolute;margin-top: 16%;margin-left: -9%;color: black;font-size: 10px;">欧洲</label>
+                <div id="o0" style="width: 320px;height: 236px;z-index: 1;margin-left: 16%;margin-top: -36%;-webkit-tap-highlight-color: transparent;user-select: none;position: relative;"></div>
+
+                <section id="set-1" style="z-index: 2; position: absolute; width: 100%; height: 102.2%; margin-top: -40.5%; border-radius: 10px; background: rgba(0, 0, 0, 0.8); display: none;">
+                    <div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a" style="margin-top: -12%;">
+                        <a href="" class="hi-icon hi-icon-mobile" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: -41%;"></a>
+                        <a href="" class="hi-icon1 hi-icon-mobile1" style="position: absolute;margin-top: 8%;width: 65px; height: 65px;margin-left: -8%;"></a>
+                        <a href="" class="hi-icon2 hi-icon-mobile2" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: 25%;"></a>
+                    </div>
+                </section>
+
+            </div>
+            <div onmouseover="oc2()" onmouseleave="oc2v()" style="position: absolute;margin-top: -103%;background: white;border-radius: 10px;height: 13%;width: 100%;">
+                <img src="../static/images/map/亚1.png" style="width: 12%;margin-left: -78%;margin-top: 4%;">
+                <label style="position: absolute;margin-top: 16%;margin-left: -9%;color: black;font-size: 10px;">亚洲</label>
+                <div id="o1" style="width: 320px; height: 236px; z-index: 1; margin-left: 16%; margin-top: -36%; -webkit-tap-highlight-color: transparent; user-select: none; position: relative;" _echarts_instance_="ec_1617336028955">
+                </div>
+
+                <section id="set-2" style="z-index: 2; position: absolute; width: 100%; height: 102.2%; margin-top: -40.5%; border-radius: 10px; background: rgba(0, 0, 0, 0.8); display: none;">
+                    <div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a" style="margin-top: -12%;">
+                        <a href="" class="hi-icon hi-icon-mobile" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: -41%;"></a>
+                        <a href="" class="hi-icon1 hi-icon-mobile1" style="position: absolute;margin-top: 8%;width: 65px; height: 65px;margin-left: -8%;"></a>
+                        <a href="" class="hi-icon2 hi-icon-mobile2" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: 25%;"></a>
+                    </div>
+                </section>
+            </div>
+            <div onmouseover="oc3()" onmouseleave="oc3v()" style="position: absolute;margin-top: -54%;background: white;border-radius: 10px;height: 13%;width: 100%;">
+                <img src="../static/images/map/北美1.png" style="width: 12%;margin-left: -78%;margin-top: 4%;">
+                <label style="position: absolute;margin-top: 16%;margin-left: -11%;color: black;font-size: 10px;">北美洲</label>
+                <div id="o2" style="width: 320px; height: 236px; z-index: 1; margin-left: 16%; margin-top: -36%; -webkit-tap-highlight-color: transparent; user-select: none; position: relative;" _echarts_instance_="ec_1617336028956">
+                </div>
+                <section id="set-3" style="z-index: 2; position: absolute; width: 100%; height: 102.2%; margin-top: -40.5%; border-radius: 10px; background: rgba(0, 0, 0, 0.8); display: none;">
+                    <div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a" style="margin-top: -12%;">
+                        <a href="" class="hi-icon hi-icon-mobile" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: -41%;"></a>
+                        <a href="" class="hi-icon1 hi-icon-mobile1" style="position: absolute;margin-top: 8%;width: 65px; height: 65px;margin-left: -8%;"></a>
+                        <a href="" class="hi-icon2 hi-icon-mobile2" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: 25%;"></a>
+                    </div>
+                </section>
+            </div>
+            <div onmouseover="oc4()" onmouseleave="oc4v()" style="position: absolute;margin-top: -5%;background: white;border-radius: 10px;height: 13%;width: 100%;">
+                <img src="../static/images/map/南美1.png" style="width: 12%;margin-left: -78%;margin-top: 4%;">
+                <label style="position: absolute;margin-top: 16%;margin-left: -11%;color: black;font-size: 10px;">南美洲</label>
+                <div id="o3" style="width: 320px; height: 236px; z-index: 1; margin-left: 16%; margin-top: -36%; -webkit-tap-highlight-color: transparent; user-select: none; position: relative;" _echarts_instance_="ec_1617336028957">
+                </div>
+                <section id="set-4" style="z-index: 2; position: absolute; width: 100%; height: 102.2%; margin-top: -40.5%; border-radius: 10px; background: rgba(0, 0, 0, 0.8); display: none;">
+                    <div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a" style="margin-top: -12%;">
+                        <a href="" class="hi-icon hi-icon-mobile" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: -41%;"></a>
+                        <a href="" class="hi-icon1 hi-icon-mobile1" style="position: absolute;margin-top: 8%;width: 65px; height: 65px;margin-left: -8%;"></a>
+                        <a href="" class="hi-icon2 hi-icon-mobile2" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: 25%;"></a>
+                    </div>
+                </section>
+            </div>
+            <div onmouseover="oc5()" onmouseleave="oc5v()" style="position: absolute;margin-top: 44%;background: white;border-radius: 10px;height: 13%;width: 100%;">
+                <img src="../static/images/map/非1.png" style="width: 12%;margin-left: -78%;margin-top: 4%;">
+                <label style="position: absolute;margin-top: 16%;margin-left: -9%;color: black;font-size: 10px;">非洲</label>
+                <div id="o4" style="width: 320px; height: 236px; z-index: 1; margin-left: 16%; margin-top: -36%; -webkit-tap-highlight-color: transparent; user-select: none; position: relative;" _echarts_instance_="ec_1617336028958">
+                </div>
+                <section id="set-5" style="z-index: 2; position: absolute; width: 100%; height: 102.2%; margin-top: -40.5%; border-radius: 10px; background: rgba(0, 0, 0, 0.8); display: none;">
+                    <div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a" style="margin-top: -12%;">
+                        <a href="" class="hi-icon hi-icon-mobile" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: -41%;"></a>
+                        <a href="" class="hi-icon1 hi-icon-mobile1" style="position: absolute;margin-top: 8%;width: 65px; height: 65px;margin-left: -8%;"></a>
+                        <a href="" class="hi-icon2 hi-icon-mobile2" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: 25%;"></a>
+                    </div>
+                </section>
+            </div>
+            <div onmouseover="oc6()" onmouseleave="oc6v()" style="position: absolute;margin-top: 93%;background: white;border-radius: 10px;height: 13%;width: 100%;">
+                <img src="../static/images/map/中国.png" style="width: 12%;margin-left: -78%;margin-top: 4%;">
+                <label style="position: absolute;margin-top: 16%;margin-left: -9%;color: black;font-size: 10px;">中国</label>
+                <div id="o5" style="width: 320px; height: 236px; z-index: 1; margin-left: 16%; margin-top: -36%; -webkit-tap-highlight-color: transparent; user-select: none; position: relative;" _echarts_instance_="ec_1617336028959">
+                </div>
+                <section id="set-6" style="z-index: 2; position: absolute; width: 100%; height: 102.2%; margin-top: -40.5%; border-radius: 10px; background: rgba(0, 0, 0, 0.8); display: none;">
+                    <div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a" style="margin-top: -12%;">
+                        <a href="" class="hi-icon hi-icon-mobile" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: -41%;"></a>
+                        <a href="" class="hi-icon1 hi-icon-mobile1" style="position: absolute;margin-top: 8%;width: 65px; height: 65px;margin-left: -8%;"></a>
+                        <a href="" class="hi-icon2 hi-icon-mobile2" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: 25%;"></a>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div id="jiaofulist"  style="position: absolute;width: 98%;margin-top: 30%;margin-left: -122%;">
+            <div onmouseover="oc7()" onmouseleave="oc7v()" style="position: absolute;margin-top: -152%;background: white;border-radius: 10px;height: 13%;">
+                <img src="../static/images/map/欧洲.png" style="width: 12%;margin-left: -78%;margin-top: 4%;">
+                <label style="position: absolute;margin-top: 16%;margin-left: -9%;color: black;font-size: 10px;">欧洲</label>
+                <div id="j0" style="width: 320px;height: 236px;z-index: 1;margin-left: 16%;margin-top: -36%;-webkit-tap-highlight-color: transparent;user-select: none;position: relative;"></div>
+
+                <section id="set-7" style="z-index: 2; position: absolute; width: 100%; height: 102.2%; margin-top: -40.5%; border-radius: 10px; background: rgba(0, 0, 0, 0.8); display: none;">
+                    <div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a" style="margin-top: -12%;">
+                        <a href="" class="hi-icon hi-icon-mobile" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: -41%;"></a>
+                        <a href="" class="hi-icon1 hi-icon-mobile1" style="position: absolute;margin-top: 8%;width: 65px; height: 65px;margin-left: -8%;"></a>
+                        <a href="" class="hi-icon2 hi-icon-mobile2" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: 25%;"></a>
+                    </div>
+                </section>
+
+            </div>
+            <div onmouseover="oc8()" onmouseleave="oc8v()" style="position: absolute;margin-top: -103%;background: white;border-radius: 10px;height: 13%;width: 100%;">
+                <img src="../static/images/map/亚1.png" style="width: 12%;margin-left: -78%;margin-top: 4%;">
+                <label style="position: absolute;margin-top: 16%;margin-left: -9%;color: black;font-size: 10px;">亚洲</label>
+                <div id="j1" style="width: 320px; height: 236px; z-index: 1; margin-left: 16%; margin-top: -36%; -webkit-tap-highlight-color: transparent; user-select: none; position: relative;" _echarts_instance_="ec_1617336028955">
+                </div>
+
+                <section id="set-8" style="z-index: 2; position: absolute; width: 100%; height: 102.2%; margin-top: -40.5%; border-radius: 10px; background: rgba(0, 0, 0, 0.8); display: none;">
+                    <div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a" style="margin-top: -12%;">
+                        <a href="" class="hi-icon hi-icon-mobile" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: -41%;"></a>
+                        <a href="" class="hi-icon1 hi-icon-mobile1" style="position: absolute;margin-top: 8%;width: 65px; height: 65px;margin-left: -8%;"></a>
+                        <a href="" class="hi-icon2 hi-icon-mobile2" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: 25%;"></a>
+                    </div>
+                </section>
+            </div>
+            <div onmouseover="oc9()" onmouseleave="oc9v()" style="position: absolute;margin-top: -54%;background: white;border-radius: 10px;height: 13%;width: 100%;">
+                <img src="../static/images/map/北美1.png" style="width: 12%;margin-left: -78%;margin-top: 4%;">
+                <label style="position: absolute;margin-top: 16%;margin-left: -11%;color: black;font-size: 10px;">北美洲</label>
+                <div id="j2" style="width: 320px; height: 236px; z-index: 1; margin-left: 16%; margin-top: -36%; -webkit-tap-highlight-color: transparent; user-select: none; position: relative;" _echarts_instance_="ec_1617336028956">
+                </div>
+                <section id="set-9" style="z-index: 2; position: absolute; width: 100%; height: 102.2%; margin-top: -40.5%; border-radius: 10px; background: rgba(0, 0, 0, 0.8); display: none;">
+                    <div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a" style="margin-top: -12%;">
+                        <a href="" class="hi-icon hi-icon-mobile" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: -41%;"></a>
+                        <a href="" class="hi-icon1 hi-icon-mobile1" style="position: absolute;margin-top: 8%;width: 65px; height: 65px;margin-left: -8%;"></a>
+                        <a href="" class="hi-icon2 hi-icon-mobile2" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: 25%;"></a>
+                    </div>
+                </section>
+            </div>
+            <div onmouseover="oc10()" onmouseleave="oc10v()" style="position: absolute;margin-top: -5%;background: white;border-radius: 10px;height: 13%;width: 100%;">
+                <img src="../static/images/map/南美1.png" style="width: 12%;margin-left: -78%;margin-top: 4%;">
+                <label style="position: absolute;margin-top: 16%;margin-left: -11%;color: black;font-size: 10px;">南美洲</label>
+                <div id="j3" style="width: 320px; height: 236px; z-index: 1; margin-left: 16%; margin-top: -36%; -webkit-tap-highlight-color: transparent; user-select: none; position: relative;" _echarts_instance_="ec_1617336028957">
+                </div>
+                <section id="set-10" style="z-index: 2; position: absolute; width: 100%; height: 102.2%; margin-top: -40.5%; border-radius: 10px; background: rgba(0, 0, 0, 0.8); display: none;">
+                    <div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a" style="margin-top: -12%;">
+                        <a href="" class="hi-icon hi-icon-mobile" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: -41%;"></a>
+                        <a href="" class="hi-icon1 hi-icon-mobile1" style="position: absolute;margin-top: 8%;width: 65px; height: 65px;margin-left: -8%;"></a>
+                        <a href="" class="hi-icon2 hi-icon-mobile2" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: 25%;"></a>
+                    </div>
+                </section>
+            </div>
+            <div onmouseover="oc11()" onmouseleave="oc11v()" style="position: absolute;margin-top: 44%;background: white;border-radius: 10px;height: 13%;width: 100%;">
+                <img src="../static/images/map/非1.png" style="width: 12%;margin-left: -78%;margin-top: 4%;">
+                <label style="position: absolute;margin-top: 16%;margin-left: -9%;color: black;font-size: 10px;">非洲</label>
+                <div id="j4" style="width: 320px; height: 236px; z-index: 1; margin-left: 16%; margin-top: -36%; -webkit-tap-highlight-color: transparent; user-select: none; position: relative;" _echarts_instance_="ec_1617336028958">
+                </div>
+                <section id="set-11" style="z-index: 2; position: absolute; width: 100%; height: 102.2%; margin-top: -40.5%; border-radius: 10px; background: rgba(0, 0, 0, 0.8); display: none;">
+                    <div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a" style="margin-top: -12%;">
+                        <a href="" class="hi-icon hi-icon-mobile" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: -41%;"></a>
+                        <a href="" class="hi-icon1 hi-icon-mobile1" style="position: absolute;margin-top: 8%;width: 65px; height: 65px;margin-left: -8%;"></a>
+                        <a href="" class="hi-icon2 hi-icon-mobile2" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: 25%;"></a>
+                    </div>
+                </section>
+            </div>
+            <div onmouseover="oc12()" onmouseleave="oc12v()" style="position: absolute;margin-top: 93%;background: white;border-radius: 10px;height: 13%;width: 100%;">
+                <img src="../static/images/map/中国.png" style="width: 12%;margin-left: -78%;margin-top: 4%;">
+                <label style="position: absolute;margin-top: 16%;margin-left: -9%;color: black;font-size: 10px;">中国</label>
+                <div id="j5" style="width: 320px; height: 236px; z-index: 1; margin-left: 16%; margin-top: -36%; -webkit-tap-highlight-color: transparent; user-select: none; position: relative;" _echarts_instance_="ec_1617336028959">
+                </div>
+                <section id="set-12" style="z-index: 2; position: absolute; width: 100%; height: 102.2%; margin-top: -40.5%; border-radius: 10px; background: rgba(0, 0, 0, 0.8); display: none;">
+                    <div class="hi-icon-wrap hi-icon-effect-1 hi-icon-effect-1a" style="margin-top: -12%;">
+                        <a href="" class="hi-icon hi-icon-mobile" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: -41%;"></a>
+                        <a href="" class="hi-icon1 hi-icon-mobile1" style="position: absolute;margin-top: 8%;width: 65px; height: 65px;margin-left: -8%;"></a>
+                        <a href="" class="hi-icon2 hi-icon-mobile2" style="position: absolute;margin-top: 8%;width: 65px;height: 65px;margin-left: 25%;"></a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <div class="menu1" style="margin-left: 70%;background: #33333380;">
+
+        <div class="" id="right" style="top: 2%;">
+            <div class="right-bottom public-bg" style="position: absolute;margin-top: -138%;height: 26%;width: 100%;background: none;">
+                <div class="public-title">销售曲线</div>
+                <div class="title-nav" id="zhexian" _echarts_instance_="ec_1617345701737" style="width: 422px; height: 279px;-webkit-tap-highlight-color: transparent; user-select: none; position: relative;">
+                </div>
+            </div>
+            <div class="right-bottom public-bg" style="margin-top: -48%;height: 25%;position: absolute;width: 100%;background: none;">
+                <div class="public-title">产品曲线</div>
+                <div class="title-nav" id="zhexian0" _echarts_instance_="ec_1617345701738" style="width: 422px; height: 279px;-webkit-tap-highlight-color: transparent; user-select: none; position: relative;">
+                </div>
+            </div>
+            <div class="right-bottom public-bg" style="position: absolute;margin-top: 40.5%;height: 25%;margin-left: 0.5%;width: 100%;background: none;">
+                <div class="public-title">交货曲线</div>
+                <div class="title-nav" id="zhexian1" _echarts_instance_="ec_1617345701739" style="width: 422px; height: 279px;-webkit-tap-highlight-color: transparent; user-select: none; position: relative;">
+                </div>
+            </div>
+            <div class="right-bottom public-bg" style="margin-top: 118%;position: absolute;height: 20%;width: 100%;background: none;">
+                <div class="public-title">库存曲线</div>
+                <div class="title-nav" id="zhexian2" _echarts_instance_="ec_1617345701740" style="width: 422px; height: 279px;-webkit-tap-highlight-color: transparent; user-select: none; position: relative;">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<script>
+    $(function() {
+        $("#tocity").bind('input propertychange', function() {
+            var a = $("#tocity").val();
+            console.log("a",a)
+        })
+
+    })
+
+</script>
+<script type='text/javascript'>
+    var s_ajaxListener = new Object();
+    s_ajaxListener.tempOpen = XMLHttpRequest.prototype.open;
+    s_ajaxListener.tempSend = XMLHttpRequest.prototype.send;
+    s_ajaxListener.callback = function () {
+        console.log("3")
+    }
+
+    XMLHttpRequest.prototype.open = function(a,b) {
+        console.log("1")
+        // window.location.href="../../../../test4/view.html"
+        // window.open("../test4/view.html");
+        if (!a) var a='';
+        if (!b) var b='';
+        s_ajaxListener.tempOpen.apply(this, arguments);
+        s_ajaxListener.method = a;
+        s_ajaxListener.url = b;
+        if (a.toLowerCase() == 'get') {
+            s_ajaxListener.data = b.split('?');
+            s_ajaxListener.data = s_ajaxListener.data[1];
+        }
+    }
+
+    XMLHttpRequest.prototype.send = function(a,b) {
+        console.log("2")
+        if (!a) var a='';
+        if (!b) var b='';
+        s_ajaxListener.tempSend.apply(this, arguments);
+        if(s_ajaxListener.method.toLowerCase() == 'post')s_ajaxListener.data = a;
+        s_ajaxListener.callback();
+    }
+
+
+</script>
+
+
+<script>
+    //顶部时间
+    function getTime(){
+        var myDate = new Date();
+        var myYear = myDate.getFullYear(); //获取完整的年份(4位,1970-????)
+        var myMonth = myDate.getMonth()+1; //获取当前月份(0-11,0代表1月)
+        var myToday = myDate.getDate(); //获取当前日(1-31)
+        var myDay = myDate.getDay(); //获取当前星期X(0-6,0代表星期天)
+        var myHour = myDate.getHours(); //获取当前小时数(0-23)
+        var myMinute = myDate.getMinutes(); //获取当前分钟数(0-59)
+        var mySecond = myDate.getSeconds(); //获取当前秒数(0-59)
+        var week = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+        var nowTime;
+
+        nowTime = myYear+'年'+fillZero(myMonth)+'月'+fillZero(myToday)+'日'+'&nbsp;&nbsp;'+fillZero(myHour)+':'+fillZero(myMinute)+':'+fillZero(mySecond)+'&nbsp;&nbsp;'+week[myDay]+'&nbsp;&nbsp;';
+        //console.log(nowTime);
+        $('#time').html(nowTime);
+    };
+    function fillZero(str){
+        var realNum;
+        if(str<10){
+            realNum	= '0'+str;
+        }else{
+            realNum	= str;
+        }
+        return realNum;
+    }
+    setInterval(getTime,1000);
+</script>
+<script>
+    $('#menu').on('click',function(){
+
+        if (document.getElementById("left").className=="left-body") {
+            var obj = document.getElementById("left");
+            obj.setAttribute("class", "nav-mini");
+            var obj1 = document.getElementById("right");
+            obj1.setAttribute("class", "nav-mini1");
+
+        }else  {
+            var obj = document.getElementById("left");
+            obj.setAttribute("class", "left-body");
+            var obj1 = document.getElementById("right");
+            obj1.setAttribute("class", "right-body");
+        }
+    });
+
+
+
+    jQuery(window).resize(function(){
+        resizenow();
+    });
+    function resizenow() {
+        var browserwidth = jQuery(window).width();
+        var browserheight = jQuery(window).height();
+        jQuery('.bonfire-pageloader-icon').css('right', ((browserwidth - jQuery(".bonfire-pageloader-icon").width())/2)).css('top', ((browserheight - jQuery(".bonfire-pageloader-icon").height())/2));
+    };
+    resizenow();
+</script>
+
+<script>
+    setInterval("myInterval()",4000);//1000为1秒钟
+
+    function myInterval()
+    {
+        $("#countRun").numberAnimate({
+            num: Math.ceil(Math.random()*9999),
+            dot: 0,
+            speed: 1500,
+        });
+        $("#countRun1").numberAnimate({
+            num: Math.ceil(Math.random()*9999),
+            dot: 0,
+            speed: 1500,
+        });
+        $("#countRun3").numberAnimate({
+            num: Math.ceil(Math.random()*9999),
+            dot: 0,
+            speed: 1500,
+        });
+        $("#countRun4").numberAnimate({
+            num: Math.ceil(Math.random()*9999),
+            dot: 0,
+            speed: 1500,
+        });
+        $("#countRun5").numberAnimate({
+            num: Math.ceil(Math.random()*9999),
+            dot: 0,
+            speed: 1500,
+        });
+        $("#countRun6").numberAnimate({
+            num: Math.ceil(Math.random()*9999),
+            dot:0,
+            speed: 1500,
+        });
+        $("#countRun7").numberAnimate({
+            num: Math.ceil(Math.random()*9999),
+            dot: 0,
+            speed: 1500,
+        });
+        $("#countRun8").numberAnimate({
+            num: Math.ceil(Math.random()*9999),
+            dot: 0,
+            speed: 1500,
+        });
+        $("#countRun9").numberAnimate({
+            num: Math.ceil(Math.random()*9999),
+            dot: 0,
+            speed: 1500,
+        });
+        $("#countRun10").numberAnimate({
+            num: Math.ceil(Math.random()*9999),
+            dot: 0,
+            speed: 1500,
+        });
+        $("#countRun11").numberAnimate({
+            num: Math.ceil(Math.random()*9999),
+            dot: 0,
+            speed: 1500,
+        });
+        $("#countRun12").numberAnimate({
+            num: Math.ceil(Math.random()*9999),
+            dot: 0,
+            speed: 1500,
+        });
+    }
+
+    // function myInterval1(){
+    //      return Math.ceil(Math.random()*99999);
+    // }
+
+</script>
+<script src="http://unpkg.com/vue/dist/vue.js"></script>
+<script src="http://unpkg.com/element-ui@2.4.1/lib/index.js"></script>
+<script >
+    // children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]
+    //{value:'英国',label:'英国',children:[]},
+    var Main =new Vue({
+        el:"#cascader1",
+        data() {
+            return {
+                cascader1:0,
+                value: [],
+                options: [
+                    {
+                        value:'亚洲',
+                        label:'亚洲',
+                        children:[{   value:'巴基斯坦',label:'巴基斯坦', children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{   value:'日本',label:'日本', children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{   value:'韩国',label:'韩国', children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]}]
+                    },
+                    {
+                        value:'欧洲',
+                        label:'欧洲',
+                        children:[{value:'英国',label:'英国',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'法国',label:'法国',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'德国',label:'德国',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'俄罗斯',label:'俄罗斯',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},]
+                    },
+                    {
+                        value:'北美洲',
+                        label:'北美洲',
+                        children:[{value:'美国',label:'美国',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'墨西哥',label:'墨西哥',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'加拿大',label:'加拿大',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},]
+                    },
+                    {
+                        value:'南美洲',
+                        label:'南美洲',
+                        children:[{value:'巴西',label:'巴西',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'阿根廷',label:'阿根廷',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'哥伦比亚',label:'哥伦比亚',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},]
+                    },
+                    {
+                        value:'非洲',
+                        label:'非洲',
+                        children:[{value:'南非',label:'南非',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'纳米比亚',label:'纳米比亚',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'肯尼亚',label:'肯尼亚',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'埃塞俄比亚',label:'埃塞俄比亚',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},]
+                    },
+                    {
+                        value:'中国',
+                        label:'中国',
+                        children:[{value:'上海',label:'上海',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'北京',label:'北京',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'深圳',label:'深圳',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},]
+                    }
+
+                ]
+            };
+        },
+        methods: {
+            cityflyline(e){
+                flyLines.clearAll(scene)
+                let g1 = latlongToCarteson(cities[e].lat, cities[e]["long"], v);
+                let start=new THREE.Vector3(g1.x, g1.y, g1.z );
+                cities.forEach(function (item) {
+
+                    var g2 = latlongToCarteson(item.lat, item["long"], v);
+                    var end= new THREE.Vector3(g2.x, g2.y, g2.z );
+                    flyLines.addLines(start,end,randomVec3Color());
+                })
+                scene.add(flyLines.groupLines)
+            },
+            movesprites(e){
+                var g2 = latlongToCarteson(cities[e].lat, cities[e]["long"], v);
+                var end= new THREE.Vector3(g2.x, g2.y, g2.z );
+
+                var div = document.createElement('div');
+                // div.innerHTML = JSON.stringify(item['target'].userData['data']);
+                div.style.padding = '20px';
+                div.classList.add("cq-tag");
+                div.style.zIndex = 10;
+                div.style.margin = '30px';
+                div.style.position = 'absolute';
+                div.style.borderRadius = '5px';
+                div.style.backgroundColor = '#fff';
+                div.style.boxShadow = '0px 3px 7px 0px rgba(28,31,33,0.15)';
+                div.innerHTML="<div><label>订单量：<label style='color: #0f9d58'>"+leftnums.spritesnum1+"</label></label><label</div><div><label>交付量：<label style='color: #0f9d58'>"+leftnums.spritesnum2+"</label><label</div>"
+                div.dataset['lat']=cities[e].lat;
+                div.dataset['long']=cities[e].long;
+                document.body.appendChild(div)
+                tag(end,div);
+            },
+            handleChange(value) {
+                console.log(value);
+                if(value.length>0){
+                    if(value[2]=="详细数据"&&value[1]=="上海"){
+                        this.movesprites(16)
+                    }else if(value[2]=="详细数据"&&value[1]=="北京"){
+                        this.movesprites(3)
+                    }else if(value[2]=="详细数据"&&value[1]=="日本"){
+                        this.movesprites(18)
+                    }else if(value[2]=="详细数据"&&value[1]=="英国"){
+                        this.movesprites(8)
+                    }else if(value[2]=="详细数据"&&value[1]=="法国"){
+                        this.movesprites(11)
+                    }else if(value[2]=="详细数据"&&value[1]=="美国"){
+                        this.movesprites(9)
+                    }else if(value[2]=="详细数据"&&value[1]=="加拿大"){
+                        this.movesprites(19)
+                    }else if(value[2]=="详细数据"&&value[1]=="巴西"){
+                        this.movesprites(14)
+                    }else if(value[2]=="详细数据"&&value[1]=="南非"){
+                        this.movesprites(5)
+                    }else if(value[2]=="详细数据"&&value[1]!=""){
+                        var arr1=[0,1,2,4,6,7,10,12,13,15,17,20]
+                        var index = Math.floor((Math.random()*arr1.length));
+                        var random=arr1[index];
+                        this.movesprites(random)
+                    }
+
+                    if(value[2]=="显示飞线"&&value[1]=="上海"){
+                        this.cityflyline(16)
+                    }else if(value[2]=="显示飞线"&&value[1]=="北京"){
+                        this.cityflyline(3)
+                    }else if(value[2]=="显示飞线"&&value[1]=="日本"){
+                        this.cityflyline(18)
+                    }else if(value[2]=="显示飞线"&&value[1]=="英国"){
+                        this.cityflyline(8)
+                    }else if(value[2]=="显示飞线"&&value[1]=="法国"){
+                        this.cityflyline(11)
+                    }else if(value[2]=="显示飞线"&&value[1]=="美国"){
+                        this.cityflyline(9)
+                    }else if(value[2]=="显示飞线"&&value[1]=="加拿大"){
+                        this.cityflyline(19)
+                    }else if(value[2]=="显示飞线"&&value[1]=="巴西"){
+                        this.cityflyline(14)
+                    }else if(value[2]=="显示飞线"&&value[1]=="南非"){
+                        this.cityflyline(5)
+                    }else if(value[2]=="显示飞线"&&value[1]!=""){
+                        var arr1=[0,1,2,4,6,7,10,12,13,15,17,20]
+                        var index = Math.floor((Math.random()*arr1.length));
+                        var random=arr1[index];
+                        this.cityflyline(random)
+                    }
+
+                    if(value[2]=="进入会议系统"){
+                        console.log("1",value[2])
+                        // window.open("https://akino512.gitee.io/jitsi-frontend/#/123456");
+                        $.NZ_Window.show({
+                            title:'视频会议系统',
+                            url: "https://akino512.gitee.io/jitsi-frontend/#/123456",
+                            width: 1226,
+                            height: 670,
+                            left: 366,
+                            top: 118,
+                            operate: {
+                                btn_Close: true, //关闭按钮
+                                btn_Max: true, //最大化按钮
+                                btn_Refresh: true, //刷新按钮
+                                btn_NewWindow: true, //新窗口按钮
+                                resize: true //调整窗口大小按钮
+                            }
+                        });
+                    }
+                }
+            },
+
+        }
+    });
+    var Main1 =new Vue({
+        el:"#cascader2",
+        data() {
+            return {
+                cascader2:0,
+                value: [],
+                options: [
+                    {
+                        value:'亚洲',
+                        label:'亚洲',
+                        children:[{   value:'巴基斯坦',label:'巴基斯坦', children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{   value:'日本',label:'日本', children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{   value:'韩国',label:'韩国', children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]}]
+                    },
+                    {
+                        value:'欧洲',
+                        label:'欧洲',
+                        children:[{value:'英国',label:'英国',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'法国',label:'法国',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'德国',label:'德国',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'俄罗斯',label:'俄罗斯',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},]
+                    },
+                    {
+                        value:'北美洲',
+                        label:'北美洲',
+                        children:[{value:'美国',label:'美国',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'墨西哥',label:'墨西哥',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'加拿大',label:'加拿大',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},]
+                    },
+                    {
+                        value:'南美洲',
+                        label:'南美洲',
+                        children:[{value:'巴西',label:'巴西',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'阿根廷',label:'阿根廷',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'哥伦比亚',label:'哥伦比亚',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},]
+                    },
+                    {
+                        value:'非洲',
+                        label:'非洲',
+                        children:[{value:'南非',label:'南非',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'纳米比亚',label:'纳米比亚',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'肯尼亚',label:'肯尼亚',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'埃塞俄比亚',label:'埃塞俄比亚',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},]
+                    },
+                    {
+                        value:'中国',
+                        label:'中国',
+                        children:[{value:'上海',label:'上海',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'北京',label:'北京',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},{value:'深圳',label:'深圳',children:[{ label:'显示飞线',value:'显示飞线'},{ label:'详细数据',value:'详细数据'},{ label:'进入会议系统',value:'进入会议系统'}]},]
+                    }
+
+                ]
+            };
+        },
+        methods: {
+            cityflyline(e){
+                flyLines.clearAll(scene)
+                let g1 = latlongToCarteson(cities[e].lat, cities[e]["long"], v);
+                let start=new THREE.Vector3(g1.x, g1.y, g1.z );
+                cities.forEach(function (item) {
+
+                    var g2 = latlongToCarteson(item.lat, item["long"], v);
+                    var end= new THREE.Vector3(g2.x, g2.y, g2.z );
+                    flyLines.addLines(start,end,randomVec3Color());
+                })
+                scene.add(flyLines.groupLines)
+            },
+            movesprites(e){
+                var g2 = latlongToCarteson(cities[e].lat, cities[e]["long"], v);
+                var end= new THREE.Vector3(g2.x, g2.y, g2.z );
+
+                var div = document.createElement('div');
+                // div.innerHTML = JSON.stringify(item['target'].userData['data']);
+                div.style.padding = '20px';
+                div.classList.add("cq-tag");
+                div.style.zIndex = 10;
+                div.style.margin = '30px';
+                div.style.position = 'absolute';
+                div.style.borderRadius = '5px';
+                div.style.backgroundColor = '#fff';
+                div.style.boxShadow = '0px 3px 7px 0px rgba(28,31,33,0.15)';
+                div.innerHTML="<div><label>订单量：<label style='color: #0f9d58'>"+leftnums.spritesnum1+"</label></label><label</div><div><label>交付量：<label style='color: #0f9d58'>"+leftnums.spritesnum2+"</label><label</div>"
+                div.dataset['lat']=cities[e].lat;
+                div.dataset['long']=cities[e].long;
+                document.body.appendChild(div)
+                tag(end,div);
+            },
+            handleChange(value) {
+                console.log(value);
+                if(value.length>0){
+                    if(value[2]=="详细数据"&&value[1]=="上海"){
+                        this.movesprites(16)
+                    }else if(value[2]=="详细数据"&&value[1]=="北京"){
+                        this.movesprites(3)
+                    }else if(value[2]=="详细数据"&&value[1]=="日本"){
+                        this.movesprites(18)
+                    }else if(value[2]=="详细数据"&&value[1]=="英国"){
+                        this.movesprites(8)
+                    }else if(value[2]=="详细数据"&&value[1]=="法国"){
+                        this.movesprites(11)
+                    }else if(value[2]=="详细数据"&&value[1]=="美国"){
+                        this.movesprites(9)
+                    }else if(value[2]=="详细数据"&&value[1]=="加拿大"){
+                        this.movesprites(19)
+                    }else if(value[2]=="详细数据"&&value[1]=="巴西"){
+                        this.movesprites(14)
+                    }else if(value[2]=="详细数据"&&value[1]=="南非"){
+                        this.movesprites(5)
+                    }else if(value[2]=="详细数据"&&value[1]!=""){
+                        var arr1=[0,1,2,4,6,7,10,12,13,15,17,20]
+                        var index = Math.floor((Math.random()*arr1.length));
+                        var random=arr1[index];
+                        this.movesprites(random)
+                    }
+
+                    if(value[2]=="显示飞线"&&value[1]=="上海"){
+                        this.cityflyline(16)
+                    }else if(value[2]=="显示飞线"&&value[1]=="北京"){
+                        this.cityflyline(3)
+                    }else if(value[2]=="显示飞线"&&value[1]=="日本"){
+                        this.cityflyline(18)
+                    }else if(value[2]=="显示飞线"&&value[1]=="英国"){
+                        this.cityflyline(8)
+                    }else if(value[2]=="显示飞线"&&value[1]=="法国"){
+                        this.cityflyline(11)
+                    }else if(value[2]=="显示飞线"&&value[1]=="美国"){
+                        this.cityflyline(9)
+                    }else if(value[2]=="显示飞线"&&value[1]=="加拿大"){
+                        this.cityflyline(19)
+                    }else if(value[2]=="显示飞线"&&value[1]=="巴西"){
+                        this.cityflyline(14)
+                    }else if(value[2]=="显示飞线"&&value[1]=="南非"){
+                        this.cityflyline(5)
+                    }else if(value[2]=="显示飞线"&&value[1]!=""){
+                        // var arr1 = new Array(21);
+                        // for(var i=0;i<arr1.length;i++){
+                        //     arr1[i] = i;
+                        // }
+                        var arr1=[0,1,2,4,6,7,10,12,13,15,17,20]
+                        var index = Math.floor((Math.random()*arr1.length));
+                        var random=arr1[index];
+                        console.log(random)
+                        this.cityflyline(random)
+                    }
+
+
+
+
+
+                    if(value[2]=="进入会议系统"){
+                        console.log("1",value[2])
+                        // window.open("https://akino512.gitee.io/jitsi-frontend/#/123456");
+                        $.NZ_Window.show({
+                            title:'视频会议系统',
+                            url: "https://akino512.gitee.io/jitsi-frontend/#/123456",
+                            width: 1226,
+                            height: 670,
+                            left: 366,
+                            top: 118,
+                            operate: {
+                                btn_Close: true, //关闭按钮
+                                btn_Max: true, //最大化按钮
+                                btn_Refresh: true, //刷新按钮
+                                btn_NewWindow: true, //新窗口按钮
+                                resize: true //调整窗口大小按钮
+                            }
+                        });
+                    }
+                }
+            },
+
+        }
+    });
+    function   xianshi1(){
+        if(Main.cascader1==1){
+            Main.cascader1=0
+        }else if(Main.cascader1==0){
+            Main.cascader1=1
+        }
+
+    }
+    function   xianshi2(){
+        console.log("aaa")
+        if(Main1.cascader2==1){
+            Main1.cascader2=0
+        }else if(Main1.cascader2==0){
+            Main1.cascader2=1
+        }
+
+    }
+    // 会议 https://akino512.gitee.io/jitsi-frontend/#/123456 https://www.starrtc.com/demo/web/
+</script>
+<script>
+    var leftnums=new Vue({
+        el:"#leftnum",
+        data(){
+            return{
+                num1:0,
+                num2:0,
+                spritesnum1:0,
+                spritesnum2:0,
+            }
+        },
+        methods:{
+
+        }
+
+    });
+    setInterval("leftnum()",4000);
+
+    function leftnum(){
+        leftnums.num1=Math.ceil(Math.random()*99999);
+        leftnums.num2=Math.ceil(Math.random()*9999);
+        leftnums.spritesnum1=Math.ceil(Math.random()*9999);
+        leftnums.spritesnum2=Math.ceil(Math.random()*999);
+    }
+</script>
+<script>
+var rightmeu=new Vue({
+    el:"#menu1",
+    data(){
+        return{
+            zhexianwidth:422
+        }
+    }
+})
+var ob=document.getElementById("caidan");
+ob.onclick=function(){
+    // zhexianResize()
+    // canvas.width=422;
+};
+
+
+
+
+$("#order").hover(
+
+    function(){
+        $(this).css("border","2px solid white");
+    },function(){
+        $(this).css("border","none");
+    }
+);
+$("#jiaofu").hover(
+    function(){
+        $(this).css("border","2px solid white");
+    },function(){
+        $(this).css("border","none");
+    }
+);
+
+
+$('#order').on('click',function(){
+    var id1=document.getElementById("orderlist");
+    var id2=document.getElementById("jiaofulist");
+if(id1.style.cssText.indexOf("-100%") != -1){
+
+    id1.style.marginLeft="1%";
+    id1.style.transition="all .3s";
+    id2.style.marginLeft="-122%";
+
+}else {
+    id1.style.marginLeft="-100%";
+    id1.style.transition="all .3s";
+}
+
+});
+$("#jiaofu").on('click',function (){
+    var id1=document.getElementById("orderlist");
+    var id2=document.getElementById("jiaofulist");
+    if(id2.style.cssText.indexOf("-122%") != -1){
+        id2.style.marginLeft="0.99%";
+        id2.style.transition="all .3s";
+        id1.style.marginLeft="-100%";
+
+
+    }else {
+        id2.style.marginLeft="-122%";
+        id2.style.transition="all .3s";
+    }
+})
+</script>
+<script src="../static/js/modernizr.custom.js"></script>
+<script>
+    var hash = window.location.hash,
+        current = 0,
+        demos = Array.prototype.slice.call( document.querySelectorAll( '#codrops-demos > a' ) );
+
+    if( hash === '' ) hash = '#set-1';
+    setDemo( demos[ parseInt( hash.match(/#set-(\d+)/)[1] ) - 1 ] );
+
+    demos.forEach( function( el, i ) {
+        el.addEventListener( 'click', function() { setDemo( this ); } );
+    } );
+
+    function setDemo( el ) {
+        var idx = demos.indexOf( el );
+        if( current !== idx ) {
+            var currentDemo = demos[ current ];
+            currentDemo.className = currentDemo.className.replace(new RegExp("(^|\\s+)" + 'current-demo' + "(\\s+|$)"), ' ');
+        }
+        current = idx;
+        el.className = 'current-demo';
+    }
+
+function oc1(){
+        var id=document.getElementById("set-1");
+        id.style.display="";
+}
+function oc1v(){
+    var id=document.getElementById("set-1");
+    id.style.display="none";
+}
+</script>
+</body>
+</html>

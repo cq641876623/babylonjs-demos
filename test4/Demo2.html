@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>demo</title>
+</head>
+<!--主文件-->
+<script src="threeJs/build/three.js"></script>
+<!--检查webGL环境-->
+<script src="threeJs/js/Detector.js"></script>
+
+<script src="threeJs/js/loaders/LoaderSupport.js"></script>
+
+<script src="threeJs/js/cameras/CinematicCamera.js"></script>
+
+
+<!--外部3D模型导入-->
+<!--obj材质导入-->
+
+<!--obj对象导入-->
+<script src="threeJs/js/loaders/OBJLoader.js"></script>
+<!--GLTF或GLB对象导入-->
+<script src="threeJs/js/loaders/GLTFLoader.js"></script>
+
+<!--辅助-->
+<!--控制文件-->
+<script src="threeJs/js/controls/OrbitControls.js"></script>
+
+<!--鼠标点击交互事件辅助-->
+<script src="threeJs/js/shaders/CopyShader.js"></script>
+<script src="threeJs/js/shaders/SMAAShader.js"></script>
+<script src="threeJs/js/shaders/FXAAShader.js"></script>
+
+<script src="threeJs/js/postprocessing/EffectComposer.js"></script>
+
+<script src="threeJs/js/shaders/FXAAShader.js"></script>
+
+<script src="threeJs/js/postprocessing/RenderPass.js"></script>
+<script src="threeJs/js/postprocessing/ShaderPass.js"></script>
+<script src="threeJs/js/postprocessing/OutlinePass.js"></script>
+<script src="threeJs/js/postprocessing/SMAAPass.js"></script>
+<script src="threeJs/js/postprocessing/SSAARenderPass.js"></script>
+<script src="threeJs/js/postprocessing/MaskPass.js"></script>
+<script src="threeJsCQQ/build/threeJsC.js"></script>
+
+<script src="threeJs/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="threeJs/js/shaders/ConvolutionShader.js"></script>
+<script src="threeJs/js/shaders/LuminosityHighPassShader.js"></script>
+
+
+<script src="Physijs-master/physi.js"></script>
+<script src="threeJs/js/controls/PointerLockControls.js"></script>
+
+<script src="threeJs/js/libs/stats.min.js"></script>
+<script src="threeJs/js/libs/dat.gui.min.js"></script>
+<script src="threeJs/js/postprocessing/OutlinePass.js"></script>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/zrender/4.3.2/zrender.min.js"></script>
+
+
+<body>
+
+</body>
+
+<script>
+
+
+    var container, stats;
+    var params = {
+        lightColor:0xffffff,
+        intensity:2,
+        projection: 'normal',
+        background: false,
+        exposure: 0.9,
+        bloomStrength: 0.4,
+        bloomThreshold: 0.22,
+        bloomRadius: 0.4
+    };
+
+    var can=document.getElementById("can");
+    if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera( 45,window.innerWidth / window.innerHeight, 1, 10000 );
+    camera.position.set( 100, 100, 100 );
+    var renderer = new THREE.WebGLRenderer({ antialias: true } );
+    renderer.toneMapping = THREE.ReinhardToneMapping;
+    renderer.setSize( window.innerWidth, window.innerHeight  );
+    // renderer.shadowMap.type = 0;
+    document.body.appendChild( renderer.domElement );
+    var controls=  new THREE.OrbitControls( camera,renderer.domElement);
+    controls.keys = {
+        LEFT: 37, //left arrow
+        UP: 38, // up arrow
+        RIGHT: 39, // right arrow
+        BOTTOM: 40 // down arrow
+    }
+    controls.mouseButtons = {
+        LEFT: THREE.MOUSE.ROTATE,
+        MIDDLE: THREE.MOUSE.PAN,
+    }
+    controls.panSpeed=2
+    controls.rotationSpeed=2
+    controls.update();
+
+    var light = new THREE.AmbientLight( params.lightColor  ); // soft white light
+    light.intensity=params.intensity
+    light.position.set( 100, 100, 100 );
+    // light.castShadow = true;
+    scene.add( light );
+
+    var raycaster = new THREE.Raycaster();
+
+    var mouse = new THREE.Vector2();
+
+    var onTouchMove=function(event) {
+        var x, y;
+        if ( event.changedTouches ) {
+
+            x = event.changedTouches[ 0 ].pageX;
+            y = event.changedTouches[ 0 ].pageY;
+
+        } else {
+
+            x = event.clientX;
+            y = event.clientY;
+
+        }
+        mouse.x = ( x / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( y /  window.innerHeight ) * 2 + 1;
+
+
+    }
+
+
+
+    var outlinePass = new THREE.OutlinePass( new THREE.Vector2( window.innerWidth, window.innerHeight ), scene, camera );
+    outlinePass.edgeStrength = 4;//包围线浓度
+    outlinePass.edgeGlow = 0.0;//边缘线范围
+    outlinePass.edgeThickness = 1;//边缘线浓度
+    outlinePass.pulsePeriod = 0;//包围线闪烁频率
+    outlinePass.visibleEdgeColor.set( '#04fdff' );//包围线颜色
+    outlinePass.hiddenEdgeColor.set( '#190a05' );//被遮挡的边界线颜色
+
+
+
+
+    function onClickObj(ev) {
+        raycaster.setFromCamera( mouse,camera );
+        var intersects = raycaster.intersectObjects( scene.children,true );
+        if(intersects.length > 0){
+            outlinePass.selectedObjects.pop()
+            outlinePass.selectedObjects.push(intersects[0].object)
+            console.log("触发点击事件",intersects[0]);
+        }
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+    var light2 = new THREE.PointLight( 0xff0000, 1, 100 );
+    light2.position.set( 50, 50, 50 );
+    scene.add( light2 );
+
+
+
+
+    renderer.setPixelRatio( window.devicePixelRatio );
+    // renderer.shadowMap.enabled = true;
+
+    var renderScene = new THREE.RenderPass( scene, camera );
+
+    var effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
+    effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
+    effectFXAA.renderToScreen = true;
+
+    const pass = new THREE.SMAAPass( window.innerWidth * renderer.getPixelRatio(), window.innerHeight * renderer.getPixelRatio() );
+    pass.renderToScreen = true;
+
+    var bloomPass = new THREE.UnrealBloomPass( new THREE.Vector2( window.innerWidth,window.innerHeight), params.bloomStrength, params.bloomRadius, params.bloomThreshold ); //1.0, 9, 0.5, 512);
+
+    var composer = new THREE.EffectComposer( renderer );
+
+
+
+
+    composer.addPass( renderScene );
+
+
+
+
+
+
+    // composer.addPass( pass );
+
+    var ssaaRenderPass = new THREE.SSAARenderPass( scene, camera );
+    // ssaaRenderPass.unbiased = false;
+
+
+    copyPass = new THREE.ShaderPass( THREE.CopyShader );
+    // copyPass.renderToScreen = true;
+    // composer.addPass( copyPass );
+    // composer.addPass( effectFXAA );
+
+    // composer.addPass( pass );
+    composer.addPass( bloomPass );
+    composer.addPass( outlinePass );
+    composer.addPass( ssaaRenderPass );
+
+
+    // texture.encoding = THREE.sRGBEncoding;
+    // this.composer.renderer.outputEncoding = THREE.sRGBEncoding
+    // THREE.Texture.encoding =THREE.sRGBEncoding
+
+    renderer.domElement.addEventListener( 'mousemove', onTouchMove,false );
+    renderer.domElement.addEventListener( 'click', onClickObj ,false);
+
+    var gui = new dat.GUI();
+
+    gui.addColor( params, 'lightColor' ).onChange(function (value) {
+        light.color.setHex(value)
+    });
+    gui.add( params, 'intensity', 0.001, 10 ).onChange(function (value) {
+        light.intensity=Number( value );
+    });
+
+    gui.add( params, 'exposure', 0.1, 2 );
+
+    gui.add( params, 'bloomThreshold', 0.0, 1.0 ).onChange( function ( value ) {
+
+        bloomPass.threshold = Number( value );
+
+    } );
+
+    gui.add( params, 'bloomStrength', 0.0, 3.0 ).onChange( function ( value ) {
+
+        bloomPass.strength = Number( value );
+
+    } );
+
+    gui.add( params, 'bloomRadius', 0.0, 1.0 ).onChange( function ( value ) {
+
+        bloomPass.radius = Number( value );
+
+    } );
+
+    gui.open();
+
+    function animateNoComposer() {
+        requestAnimationFrame( animateNoComposer );
+        controls.update();
+        composer.render();
+    }
+    animateNoComposer()
+
+
+
+
+
+    var loader = new THREE.ObjectLoader();
+    loader.load(
+        // 资源的URL
+        "scene.json",
+
+        // onLoad回调
+        // Here the loaded data is assumed to be an object
+        function ( obj ) {
+            scene.add( obj );
+            camera.lookAt(scene.position)
+        },
+
+        // onProgress回调
+        function ( xhr ) {
+            console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+        },
+
+
+
+        // onError回调
+        function ( err ) {
+            console.error( 'An error happened' );
+        }
+    );
+
+
+</script>
+
+</html>

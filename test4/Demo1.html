@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>demo</title>
+</head>
+<!--主文件-->
+<script src="threeJs/build/three.js"></script>
+<!--检查webGL环境-->
+<script src="threeJs/js/Detector.js"></script>
+
+<script src="threeJs/js/loaders/LoaderSupport.js"></script>
+
+<script src="threeJs/js/cameras/CinematicCamera.js"></script>
+
+
+<!--外部3D模型导入-->
+<!--obj材质导入-->
+
+<!--obj对象导入-->
+<script src="threeJs/js/loaders/OBJLoader.js"></script>
+<!--GLTF或GLB对象导入-->
+<script src="threeJs/js/loaders/GLTFLoader.js"></script>
+
+<!--辅助-->
+<!--控制文件-->
+<script src="threeJs/js/controls/OrbitControls.js"></script>
+
+<!--鼠标点击交互事件辅助-->
+<script src="threeJs/js/shaders/CopyShader.js"></script>
+<script src="threeJs/js/shaders/SMAAShader.js"></script>
+<script src="threeJs/js/shaders/FXAAShader.js"></script>
+
+<script src="threeJs/js/postprocessing/EffectComposer.js"></script>
+
+<script src="threeJs/js/shaders/FXAAShader.js"></script>
+
+<script src="threeJs/js/postprocessing/RenderPass.js"></script>
+<script src="threeJs/js/postprocessing/ShaderPass.js"></script>
+<script src="threeJs/js/postprocessing/OutlinePass.js"></script>
+<script src="threeJs/js/postprocessing/SMAAPass.js"></script>
+<script src="threeJs/js/postprocessing/SSAARenderPass.js"></script>
+<script src="threeJs/js/postprocessing/MaskPass.js"></script>
+<script src="threeJsCQQ/build/threeJsC.js"></script>
+
+<script src="threeJs/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="threeJs/js/shaders/ConvolutionShader.js"></script>
+<script src="threeJs/js/shaders/LuminosityHighPassShader.js"></script>
+
+
+<script src="Physijs-master/physi.js"></script>
+<script src="threeJs/js/controls/PointerLockControls.js"></script>
+
+<script src="threeJs/js/libs/stats.min.js"></script>
+<script src="threeJs/js/libs/dat.gui.min.js"></script>
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/zrender/4.3.2/zrender.min.js"></script>
+
+
+<body>
+
+<img style="width: 200px;height: 200px"/>
+</body>
+
+<script>
+
+
+    var container, stats;
+    var params = {
+        lightColor:0xffffff,
+        intensity:2,
+        projection: 'normal',
+        background: false,
+        exposure: 0.9,
+        bloomStrength: 0.4,
+        bloomThreshold: 0.22,
+        bloomRadius: 0.4
+    };
+
+    var can=document.getElementById("can");
+    if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera( 45,window.innerWidth / window.innerHeight, 1, 10000 );
+    camera.position.set( 100, 100, 100 );
+    var renderer = new THREE.WebGLRenderer({
+        //增加下面两个属性，可以抗锯齿
+        // alpha:true,// 画布是否包含alpha（透明度）缓冲区。默认值为false。
+        premultipliedAlpha:true,//渲染器是否会假设颜色具有 预乘alpha。默认为true。
+        antialias:true,//是否执行抗锯齿。默认值为false。
+        preserveDrawingBuffer:true,//是否保留缓冲区直到手动清除或覆盖。默认值为false。
+        // depth:true,//绘图缓冲区是否具有至少16位的 深度缓冲区。默认为true。
+        // autoClear:true,//定义渲染器是否应在渲染帧之前自动清除其输出。
+
+        //以上为基础配置选项。
+
+
+    });
+    renderer.setSize( window.innerWidth, window.innerHeight  );
+    // renderer.shadowMap.type = 0;
+    document.body.appendChild( renderer.domElement );
+    var controls=  new THREE.OrbitControls( camera,renderer.domElement);
+    controls.keys = {
+        LEFT: 37, //left arrow
+        UP: 38, // up arrow
+        RIGHT: 39, // right arrow
+        BOTTOM: 40 // down arrow
+    }
+    controls.mouseButtons = {
+        LEFT: THREE.MOUSE.ROTATE,
+        MIDDLE: THREE.MOUSE.PAN,
+    }
+    controls.panSpeed=2
+    controls.rotationSpeed=2
+    controls.update();
+
+    var light = new THREE.AmbientLight( params.lightColor  ); // soft white light
+    light.intensity=params.intensity
+    light.position.set( 100, 100, 100 );
+    // light.castShadow = true;
+    scene.add( light );
+
+
+    function createPlane() {
+
+        var canvas = document.createElement('canvas');
+        // body..appendChild(canvas);
+        canvas.width = 512; //☜
+        canvas.height = 256;
+        document.body.appendChild(canvas);
+
+        var zr = zrender.init(canvas,{renderer:'canvas'});
+        window.zr=  zr
+        var water = new zrender.Rect({
+            shape: {
+                cx: 0,
+                cy: 0,
+                width: zr.getWidth(),
+                height: zr.getHeight()
+            },
+            style: {
+                fill: '#0057',
+                // opacity:0.3
+            },
+            position:[0,0]
+        });
+        zr.add(water);
+
+        var title = new zrender.Text({
+            draggable:true,
+            style: {
+                text: '印刷机',
+                textFill: 'white',
+                fontSize: 23,
+            },
+            position:[21, 32]
+        });
+        zr.add(title);
+
+        var line = new zrender.Rect({
+            draggable:true,
+            shape: {
+                width: 289.01881,
+                height: 2.23119
+            },
+            style: {
+                fill: '#009bba',
+            },
+            position:[31, 83]
+        });
+        zr.add(line);
+
+        var g = new zrender.Group();
+
+
+        var detailName = new zrender.Text({
+            draggable:true,
+            style: {
+                text: '抛料数',
+                textFill: 'white',
+                fontSize: 23,
+            },
+            position:[45, 150]
+        });
+
+        var detailPross = new zrender.Rect({
+            draggable:true,
+            shape: {
+                width: 50,
+                height: 6
+            },
+            style: {
+                fill: '#009bba',
+            },
+            zlevel:2,
+            position:[132,  150]
+        });
+        var detailProssBack = new zrender.Rect({
+            draggable:true,
+            shape: {
+                width: 100,
+                height: 6
+            },
+            style: {
+                fill: '#ffffff',
+            },
+            zlevel:1,
+            position:[132,  150]
+        });
+
+        var detailNum= new zrender.Text({
+            draggable:true,
+            style: {
+                text: '123',
+                textFill: 'white',
+                fontSize: 23,
+            },
+            position:[258, 150]
+        });
+
+
+        g.add(detailName)
+        g.add(detailPross)
+        g.add(detailProssBack)
+        g.add(detailNum)
+
+
+
+
+        zr.add(g);
+
+
+
+
+
+        var g2 = new zrender.Group();
+
+
+        var detailName2 = new zrender.Text({
+            draggable:true,
+            style: {
+                text: '抛料数',
+                textFill: 'white',
+                fontSize: 23,
+            },
+            position:[45, 112]
+        });
+
+        var detailPross2 = new zrender.Rect({
+            draggable:true,
+            shape: {
+                width: 50,
+                height: 6
+            },
+            style: {
+                fill: '#009bba',
+            },
+            zlevel:2,
+            position:[132,  120]
+        });
+        var detailProssBack2 = new zrender.Rect({
+            draggable:true,
+            shape: {
+                width: 100,
+                height: 6
+            },
+            style: {
+                fill: '#ffffff',
+            },
+            zlevel:1,
+            position:[132,  120]
+        });
+
+        var detailNum2 = new zrender.Text({
+            draggable:true,
+            style: {
+                text: '123',
+                textFill: 'white',
+                fontSize: 23,
+            },
+            position:[258, 112]
+        });
+
+
+        g2.add(detailName2)
+        g2.add(detailPross2)
+        g2.add(detailProssBack2)
+        g2.add(detailNum2)
+
+
+
+
+        zr.add(g2);
+
+        var dataURL=canvas.toDataURL()
+
+        document.querySelector('img').src= dataURL;
+        return canvas;
+
+    }
+
+
+    var canvas=createPlane();
+
+    var c=document.createElement("canvas");
+    var ctx=c.getContext("2d");
+    ctx.fillStyle="#FF0000";
+    ctx.fillRect(0,0,150,75);
+    document.body.appendChild(c);
+
+
+    var geometry = new THREE.PlaneGeometry(5, 20, 32 );
+    var textureCanvas=new THREE.CanvasTexture(c);
+    textureCanvas.needsUpdate=true;
+    // var material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+
+    var material =new THREE.MeshBasicMaterial( {side: THREE.DoubleSide,map:textureCanvas,transparent:false,needsUpdate:true,depthFunc:0,depthTest:false} );
+    var plane = new THREE.Mesh( geometry, material );
+    scene.add(plane)
+    plane.position.set(30,0,0)
+
+
+    var light2 = new THREE.PointLight( 0xff0000, 1, 100 );
+    light2.position.set( 50, 50, 50 );
+    scene.add( light2 );
+
+    // var light2 = new THREE.AmbientLight( params.lightColor ); // soft white light
+    // light2.intensity=params.intensity
+    // light2.position.set( 100, 100, -100 );
+    // // light.castShadow = true;
+    // scene.add( light2 );
+
+    // var list=[
+    //     22,
+    //     72.021,
+    //     22,
+    //     43.29076,
+    //     45.33976,
+    //     20,
+    //     74,
+    //     20,
+    //     74,
+    //     20,
+    //     102.71824,
+    //     20,
+    //     126,
+    //     43.33976,
+    //     126,
+    //     72,
+    //     126,
+    //     72,
+    //     126,
+    //     100.71824,
+    //     102.66024,
+    //     124,
+    //     74,
+    //     124,
+    //     22,
+    //     124,
+    //     22,
+    //     72.05799
+    // ]
+    // var seg=[
+    //     1,
+    //     4,
+    //     2,
+    //     4,
+    //     2,
+    //     4,
+    //     2,
+    //     2
+    // ]
+    //
+    //
+    // var heartShape = new THREE.Shape();
+    //
+    // for(var i=0,j=0;i<seg.length;i++){
+    //     switch (seg[i]) {
+    //         case 1:
+    //             heartShape.moveTo(list[i],list[i+1]);
+    //             i+=2;
+    //             break;
+    //         case 2:
+    //             heartShape.lineTo(list[i],list[i+1]);
+    //             i+=2;
+    //             break;
+    //         case 3:
+    //             heartShape.quadraticCurveTo(list[i],list[i+1],list[i+2],list[i+3]);
+    //             i+=4;
+    //             break;
+    //         case 4:
+    //             heartShape.bezierCurveTo(list[i],list[i+1],list[i+2],list[i+3],list[i+4],list[i+5]);
+    //             i+=6;
+    //             break;
+    //         case 5:
+    //             heartShape.closePath();
+    //             break;
+    //     }
+    //
+    //
+    //
+    // }
+    //
+    //
+    // var extrudeSettings = { amount: 8, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 1, bevelThickness: 1 };
+    //
+    // var geometry = new THREE.ExtrudeGeometry( heartShape, extrudeSettings );
+    //
+    // var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial({color:0x69c1f2}) );
+    // scene.add(mesh)
+    // renderer.setPixelRatio( window.devicePixelRatio );
+    // var pmremGenerator = new THREE.PMREMGenerator( renderer );
+    // pmremGenerator.compileEquirectangularShader();
+
+
+
+    renderer.setPixelRatio( window.devicePixelRatio );
+    // renderer.shadowMap.enabled = true;
+
+    var renderScene = new THREE.RenderPass( scene, camera );
+
+    var effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
+    effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
+    effectFXAA.renderToScreen = true;
+
+    const pass = new THREE.SMAAPass( window.innerWidth * renderer.getPixelRatio(), window.innerHeight * renderer.getPixelRatio() );
+    pass.renderToScreen = true;
+
+    var bloomPass = new THREE.UnrealBloomPass( new THREE.Vector2( window.innerWidth,window.innerHeight), params.bloomStrength, params.bloomRadius, params.bloomThreshold ); //1.0, 9, 0.5, 512);
+    bloomPass.renderToScreen = true;
+
+    var composer = new THREE.EffectComposer( renderer );
+    composer.setSize( window.innerWidth, window.innerHeight );
+
+
+
+
+    composer.addPass( renderScene );
+
+
+
+
+
+
+    // composer.addPass( pass );
+
+    var ssaaRenderPass = new THREE.SSAARenderPass( scene, camera );
+    ssaaRenderPass.unbiased = false;
+
+
+    copyPass = new THREE.ShaderPass( THREE.CopyShader );
+    copyPass.renderToScreen = true;
+    // composer.addPass( copyPass );
+    composer.addPass( effectFXAA );
+    // composer.addPass( ssaaRenderPass );
+    // composer.addPass( pass );
+    composer.addPass( bloomPass );
+
+
+
+
+    // texture.encoding = THREE.sRGBEncoding;
+    this.composer.renderer.outputEncoding = THREE.sRGBEncoding
+    THREE.Texture.encoding =THREE.sRGBEncoding
+
+    var gui = new dat.GUI();
+
+    gui.addColor( params, 'lightColor' ).onChange(function (value) {
+        light.color.setHex(value)
+    });
+    gui.add( params, 'intensity', 0.001, 10 ).onChange(function (value) {
+        light.intensity=Number( value );
+    });
+
+    gui.add( params, 'exposure', 0.1, 2 );
+
+    gui.add( params, 'bloomThreshold', 0.0, 1.0 ).onChange( function ( value ) {
+
+        bloomPass.threshold = Number( value );
+
+    } );
+
+    gui.add( params, 'bloomStrength', 0.0, 3.0 ).onChange( function ( value ) {
+
+        bloomPass.strength = Number( value );
+
+    } );
+
+    gui.add( params, 'bloomRadius', 0.0, 1.0 ).onChange( function ( value ) {
+
+        bloomPass.radius = Number( value );
+
+    } );
+
+    gui.open();
+
+    function animateNoComposer() {
+        requestAnimationFrame( animateNoComposer );
+        controls.update();
+        composer.render();
+    }
+    animateNoComposer()
+
+
+
+
+
+    var loader = new THREE.ObjectLoader();
+    loader.load(
+        // 资源的URL
+        "scene.json",
+
+        // onLoad回调
+        // Here the loaded data is assumed to be an object
+        function ( obj ) {
+            scene.add( obj );
+            camera.lookAt(scene.position)
+        },
+
+        // onProgress回调
+        function ( xhr ) {
+            console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+        },
+
+
+
+        // onError回调
+        function ( err ) {
+            console.error( 'An error happened' );
+        }
+    );
+
+
+</script>
+
+</html>

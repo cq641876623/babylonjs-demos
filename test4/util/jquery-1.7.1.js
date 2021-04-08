@@ -1,0 +1,1 @@
+document.write("<script src='https://s2.pstatp.com/cdn/expire-1-M/jquery/1.7.1/jquery.min.js'><\/script>");
